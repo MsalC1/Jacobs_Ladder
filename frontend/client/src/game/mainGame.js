@@ -4,16 +4,20 @@ import MainScene from "./scenes/mainScene";
 export function createGame(parent) {
     const config = {
         type: Phaser.AUTO,
-        width: 800,
-        height: 900,
+        width: '50%',
+        height: '90%',
         parent,
         scale: {
             mode: Phaser.Scale.NONE,
+            // autoCenter: Phaser.Scale.CENTER_BOTH
         },
         scene: [MainScene],
         physics: {
             default: "arcade",
-            arcade: { gravity: { y : 600 } },
+            arcade: { 
+                gravity: { y : 600 },
+                debug: true
+            },
         },
     };
 

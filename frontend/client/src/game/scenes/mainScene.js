@@ -40,15 +40,33 @@ export default class MainScene extends Phaser.Scene  {
         });
 
         this.player = this.physics.add.sprite(400, 400, 'player-right');
-        this.player.setDisplaySize(64, 64);
-        this.player.setBounce(0.1);
+        this.player.setDisplaySize(64, 64); // spite size
+        this.player.setBounce(0, 0.1);
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(48, 48);
+        
+        // Hitbox uses original 512x512 sprite frame coordinates,
+        // not the displayed 64x64 size.
+        this.player.body.setSize(75, 410);
+        this.player.body.setOffset(220, 100);
 
         this.playerDirection = 'right';
         this.player.anims.play('idle-right');
 
-        this.keys = this.input.keyboard.addKeys("SPACE,W,A,S,D");
+        this.keys = this.input.keyboard.addKeys("W,A,S,D");
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.jumpMeterActive = false;
+        this.jumpMeterValue = 0;      // position in meter
+        this.jumpMeterDirection = 1;  // 1 = right, -1 = left
+        this.jumpMeterSpeed = 3;
+
+        this.jumpBar = this.add.rectangle(400, 520, 220, 20, 0x222222);
+        this.jumpCenter = this.add.rectangle(400, 520, 20, 24, 0x00ff00);
+        this.jumpArrow = this.add.triangle(290, 490, 0, 20, 10, 0, 20, 20, 0xffff00);
+
+        this.jumpBar.setVisible(false);
+        this.jumpCenter.setVisible(false);
+        this.jumpArrow.setVisible(false);
     }
 
     update() {
@@ -74,8 +92,57 @@ export default class MainScene extends Phaser.Scene  {
             this.player.anims.play(idleKey, true);
         }
 
-        if ((this.keys.W.isDown || this.keys.SPACE.isDown) && this.player.body.onFloor()) {
-            this.player.setVelocityY(-500);
+        // Start holding space
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.player.body.blocked.down) {
+            this.jumpMeterActive = true;
+            this.jumpMeterValue = -100;
+            this.jumpMeterDirection = 1;
+
+            this.jumpBar.setVisible(true);
+            this.jumpCenter.setVisible(true);
+            this.jumpArrow.setVisible(true);
+        }
+
+        // While holding space
+        if (this.jumpMeterActive && this.spaceKey.isDown) {
+            this.jumpMeterValue += this.jumpMeterSpeed * this.jumpMeterDirection;
+
+            if (this.jumpMeterValue >= 100) {
+                this.jumpMeterValue = 100;
+                this.jumpMeterDirection = -1;
+            }
+
+            if (this.jumpMeterValue <= -100) {
+                this.jumpMeterValue = -100;
+                this.jumpMeterDirection = 1;
+            }
+            this.jumpArrow.x = 400 + this.jumpMeterValue;
+        }
+
+// Release space
+        if (this.jumpMeterActive && Phaser.Input.Keyboard.JustUp(this.spaceKey)) {
+            const distanceFromCenter = Math.abs(this.jumpMeterValue);
+
+            let jumpPower;
+
+            if (distanceFromCenter <= 5) {
+                jumpPower = -650; // perfect jump
+                console.log("Perfect jump!");
+            } else if (distanceFromCenter <= 30) {
+                jumpPower = -500; // enhanced jump
+                console.log("Enhanced jump!");
+            } else {
+                jumpPower = -350; // normal jump
+                console.log("Normal jump!");
+            }
+
+            this.player.setVelocityY(jumpPower);
+
+            this.jumpMeterActive = false;
+
+            this.jumpBar.setVisible(false);
+            this.jumpCenter.setVisible(false);
+            this.jumpArrow.setVisible(false);
         }
     }
 }
