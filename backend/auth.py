@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
-SECRET_KEY = 'change-this-to-a-very-long-random-string'
+SECRET_KEY_AUTH = 'change-this-to-a-very-long-random-string'
 
 def create_token(player_id, username):
     payload = {
@@ -11,11 +11,11 @@ def create_token(player_id, username):
         'username': username,
         'exp': datetime.utcnow() + timedelta(days=7)
     }
-    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return jwt.encode(payload, SECRET_KEY_AUTH, algorithm='HS256')
 
 def decode_token(token):
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        return jwt.decode(token, SECRET_KEY_AUTH, algorithms=['HS256'])
     except:
         return None
 

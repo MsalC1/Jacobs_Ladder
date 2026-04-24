@@ -2,9 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from models import db, init_db, Player
 from auth import create_token, token_required
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
-CORS(app)
+app.config['SECRET_KEY'] = "change-me"
+
+CORS(app) # dont know if this will mess with the line on the bottom???
+socketio = SocketIO(app, cors_allowed_origins='*')
+
+#------   HTTP METHODS FOR LOGINS   -------
 
 # Initialize database configuration
 init_db(app)
@@ -47,5 +53,29 @@ def get_profile():
         'games_played': player.total_games
     })
 
+
+#-----   SOCKETIO METHODS FOR SIGNALING   -----
+
+# note: this is really basic functionality for now
+
+@socketio.on('join')
+def on_join(data):
+    # peer joins room to find counterpart
+    room = data['room']
+    join_room(room)
+    print("User has joined a room!")
+    #notify other peer
+    emit('peer_joined', room=room, include_self=False)
+
+@socketio.on('signal')
+def signal(data):
+    # relay WebRTC response/ice/offer to other peer
+    room = data['room']
+
+    # let other users in the room know what the response is
+    emit('signal', data['signal'], room=room, include_self=False) 
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)
