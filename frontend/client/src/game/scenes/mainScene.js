@@ -41,9 +41,9 @@ export default class MainScene extends Phaser.Scene  {
 
         this.player = this.physics.add.sprite(400, 400, 'player-right');
         this.player.setDisplaySize(64, 64); // spite size
-        this.player.setBounce(0, 0.1);
+        // this.player.setBounce(0, 0.1);
         this.player.setCollideWorldBounds(true);
-        
+
         // Hitbox uses original 512x512 sprite frame coordinates,
         // not the displayed 64x64 size.
         this.player.body.setSize(75, 410);
@@ -62,15 +62,38 @@ export default class MainScene extends Phaser.Scene  {
 
         this.jumpBar = this.add.rectangle(400, 520, 220, 20, 0x222222);
         this.jumpCenter = this.add.rectangle(400, 520, 20, 24, 0x00ff00);
-        this.jumpArrow = this.add.triangle(290, 490, 0, 20, 10, 0, 20, 20, 0xffff00);
+        this.jumpBarX = 400;
+        this.jumpBarWidth = 220;
+
+        this.jumpArrow = this.add.triangle(
+            this.jumpBarX - this.jumpBarWidth / 2,
+            490,
+            0, 20, 10, 0, 20, 20,
+            0xffff00
+        );
+
+        this.jumpBar.setScrollFactor(0);
+        this.jumpCenter.setScrollFactor(0);
+        this.jumpArrow.setScrollFactor(0);
 
         this.jumpBar.setVisible(false);
         this.jumpCenter.setVisible(false);
         this.jumpArrow.setVisible(false);
     }
 
-    update() {
+    update(time, delta) {
         const speed = 160;
+
+        const meterX = this.player.x;
+        const meterY = this.player.y - 55;
+
+        this.jumpBar.x = meterX;
+        this.jumpBar.y = meterY;
+
+        this.jumpCenter.x = meterX;
+        this.jumpCenter.y = meterY;
+
+        this.jumpArrow.y = meterY - 30;
 
         if (this.keys.A.isDown){
             this.player.setVelocityX(-speed);
@@ -105,7 +128,7 @@ export default class MainScene extends Phaser.Scene  {
 
         // While holding space
         if (this.jumpMeterActive && this.spaceKey.isDown) {
-            this.jumpMeterValue += this.jumpMeterSpeed * this.jumpMeterDirection;
+            this.jumpMeterValue += this.jumpMeterDirection * this.jumpMeterSpeed * (delta / 16);
 
             if (this.jumpMeterValue >= 100) {
                 this.jumpMeterValue = 100;
@@ -116,7 +139,7 @@ export default class MainScene extends Phaser.Scene  {
                 this.jumpMeterValue = -100;
                 this.jumpMeterDirection = 1;
             }
-            this.jumpArrow.x = 400 + this.jumpMeterValue;
+            this.jumpArrow.x = this.player.x + this.jumpMeterValue;
         }
 
 // Release space
