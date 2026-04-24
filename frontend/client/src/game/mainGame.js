@@ -13,7 +13,7 @@ export function createGame(parent) {
         scene: [MainScene],
         physics: {
             default: "arcade",
-            arcade: { gravity: { y : 500 } },
+            arcade: { gravity: { y : 300 } },
         },
     };
 
