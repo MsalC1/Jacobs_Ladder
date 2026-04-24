@@ -5,7 +5,7 @@ export function createGame(parent) {
     const config = {
         type: Phaser.AUTO,
         width: 800,
-        height: 600,
+        height: 900,
         parent,
         scale: {
             mode: Phaser.Scale.NONE,
@@ -13,7 +13,7 @@ export function createGame(parent) {
         scene: [MainScene],
         physics: {
             default: "arcade",
-            arcade: { gravity: { y : 300 } },
+            arcade: { gravity: { y : 600 } },
         },
     };
 
