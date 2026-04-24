@@ -56,24 +56,51 @@ def get_profile():
 
 #-----   SOCKETIO METHODS FOR SIGNALING   -----
 
-# note: this is really basic functionality for now
+# note: this code functionally only creates the peer 2 peer relationship
+#       we still need additional javascript code on front end to make
+#       the webRTC connection (p2p connection)
 
-@socketio.on('join')
-def on_join(data):
+rooms = {}
+
+@socketio.on('connect')
+def handle_connect():
+    print(f"Client connected: {request.sid}")
+
+
+@socketio.on('join_room')
+def handle_join(data):
     # peer joins room to find counterpart
-    room = data['room']
-    join_room(room)
+    room_id = data['room']
+
+    join_room(room_id)
+
+    if room_id not in rooms:
+        rooms[room_id] = []
+
+    rooms[room_id].append(request.sid)
     print("User has joined a room!")
+
     #notify other peer
-    emit('peer_joined', room=room, include_self=False)
+    emit('peers', rooms[room_id], to=request.sid)
+    emit('new_peers', request.sid, room=room_id, include_self=False)
+
+@socketio.on('ready')
+def handle_ready(data):
+    room_id = data['room']
+    emit('ready', request.sid, room=room_id, include_self=False)
+
 
 @socketio.on('signal')
-def signal(data):
+def handle_signal(data):
     # relay WebRTC response/ice/offer to other peer
-    room = data['room']
+    target = data['to']
+
 
     # let other users in the room know what the response is
-    emit('signal', data['signal'], room=room, include_self=False) 
+    emit('signal', {
+        'from': request.sid,
+        'data': data['data']
+    }, to=target) 
 
 
 
