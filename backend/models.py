@@ -1,16 +1,28 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import hashlib
+import os
 
 db = SQLAlchemy()
 
 def init_db(app):
-    # REPLACE THESE VALUES with your actual PythonAnywhere database details
-    # Format: mysql+mysqldb://<username>:<password>@<host>/<database_name>
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://youruser:yourpassword@youruser.mysql.pythonanywhere-services.com/youruser$gamedb'
+    # Use PostgreSQL on Render, fallback to SQLite for local development
+    database_url = os.environ.get('DATABASE_URL')
+
+    if database_url:
+        # Render provides PostgreSQL
+        # Fix for Render's postgresql:// vs postgres://
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgres://', 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'pool_pre_ping': True,
+            'pool_recycle': 300
+        }
+    else:
+        # Local development with SQLite
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
     
-    # PythonAnywhere drops idle connections after 5 mins; we recycle at 280s
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 

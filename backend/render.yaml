@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: game-backend
+    runtime: python
+    repo: https://github.com/yourusername/your-repo  # Update with your repo URL
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app -k eventlet -w 1 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: game-db
+          property: connectionString
+
+databases:
+  - name: game-db
+    plan: free
