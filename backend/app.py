@@ -3,12 +3,26 @@ from flask_cors import CORS
 from models import db, init_db, Player
 from auth import create_token, token_required
 from flask_socketio import SocketIO, emit, join_room, leave_room
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "change-me"
 
-CORS(app) # dont know if this will mess with the line on the bottom???
-socketio = SocketIO(app, cors_allowed_origins='*')
+# Use the environment variable for secret key in production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-to-a-secure-key-in-production')
+
+# Configure CORS for production
+CORS(app, origins=[
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'https://your-frontend-domain.onrender.com' # Update with your frontend Render URL
+])
+
+# Socket.IO with production settings
+socketio = SocketIO(app, 
+                    cors_allowed_origins='*',
+                    async_mode='eventlet',
+                    ping_timeout=60,
+                    ping_interval=25)
 
 #------   HTTP METHODS FOR LOGINS   -------
 
@@ -53,6 +67,11 @@ def get_profile():
         'games_played': player.total_games
     })
 
+# New addition of code
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for Render to verify the service is running"""
+    return jsonify({'status': 'healthy'}), 200
 
 #-----   SOCKETIO METHODS FOR SIGNALING   -----
 
@@ -66,6 +85,16 @@ rooms = {}
 def handle_connect():
     print(f"Client connected: {request.sid}")
 
+# Another new addtion of code for the next 9 lines
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Handle client disconnection and clean up rooms"""
+    print(f"Client disconnected: {request.sid}")
+    # Remove from any rooms
+    for room_id, clients in rooms.items():
+        if request.sid in clients:
+            clients.remove(request.sid)
+            emit('peer_left', request.sid, room=room_id)
 
 @socketio.on('join_room')
 def handle_join(data):
@@ -77,12 +106,15 @@ def handle_join(data):
     if room_id not in rooms:
         rooms[room_id] = []
 
-    rooms[room_id].append(request.sid)
-    print("User has joined a room!")
+    if request.sid not in rooms[room_id]:
+        rooms[room_id].append(request.sid)
+
+    print(f"User {request.sid} has joined room {room_id}!")
 
     #notify other peer
     emit('peers', rooms[room_id], to=request.sid)
-    emit('new_peers', request.sid, room=room_id, include_self=False)
+    emit('new_peer', request.sid, room=room_id, include_self=False) 
+    # Changed 'new_peers' to 'new_peer' for consistency
 
 @socketio.on('ready')
 def handle_ready(data):
@@ -102,7 +134,18 @@ def handle_signal(data):
         'data': data['data']
     }, to=target) 
 
-
+# Additions and many modifications made to the following lines of code
+def handle_leave(data):
+    """Handle a user leaving a room"""
+    room_id = data['room']
+    if room_id in rooms and request.sid in rooms[room_id]:
+        rooms[room_id].remove(request.sid)
+        leave_room(room_id)
+        emit('peer_left', request.sid, room=room_id)
+        print(f"User {request.sid} left room {room_id}")
 
 if __name__ == '__main__':
-    socketio.run(app)
+    # Get port from environment variable (Render sets this automatically)
+    port = int(os.environ.get('PORT', 5000))
+    # Use host='0.0.0.0' to listen on all network interfaces (required for Render)
+    socketio.run(app, host='0.0.0.0', port=port, debug=False)
