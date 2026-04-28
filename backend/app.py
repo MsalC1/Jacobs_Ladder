@@ -4,6 +4,7 @@ from models import db, init_db, Player
 from auth import create_token, token_required
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import os
+import re # Added for nickname number detection
 
 app = Flask(__name__)
 
@@ -32,6 +33,47 @@ init_db(app)
 # Create tables if they don't exist yet
 with app.app_context():
     db.create_all()
+
+# Store room data - SIDs list and nicknames tracking
+rooms = {}  # room_id -> list of SIDs
+nicknames = {}  # sid -> display nickname (for duplicate name handling)
+
+# Function to handle duplicate nicknames in a room
+def get_unique_nickname(room_id, requested_name):
+    """
+    Check if a nickname already exists in the room.
+    If it does, append a number (e.g, "Name", "Name 2", "Name 3", etc.)
+    Returns a unique nickname for the room.
+    """
+
+    # Get all current nicknames in this room
+    existing_nicknames = []
+
+    if room_id in rooms:
+        for sid in rooms.get(room_id, []):
+            if sid in nicknames:
+                existing_nicknames.append(nicknames[sid])
+    
+    # If the requested name doesn't exist, return it as-is
+    if requested_name not in existing_nicknames:
+        return requested_name
+    
+    # Find the next available number
+    base_name = requested_name
+    counter = 2
+
+    # Extract base name if it already has a number at the end
+    match = re.match(r'(.+?)(?:\s+(\d+))?$', requested_name)
+    if match:
+        base_name = match.group(1)
+        if match.group(2):
+            counter = int(match.group(2)) + 1
+
+    # Keep trying numbers until we find an unused one
+    while f"{base_name} {counter}" in existing_nicknames:
+        counter += 1
+        
+    return f"{base_name} {counter}"
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -79,8 +121,6 @@ def health_check():
 #       we still need additional javascript code on front end to make
 #       the webRTC connection (p2p connection)
 
-rooms = {}
-
 @socketio.on('connect')
 def handle_connect():
     print(f"Client connected: {request.sid}")
@@ -91,55 +131,93 @@ def handle_disconnect():
     """Handle client disconnection and clean up rooms"""
     print(f"Client disconnected: {request.sid}")
     # Remove from any rooms
-    for room_id, clients in rooms.items():
+    for room_id, clients in list(rooms.items()):
         if request.sid in clients:
             clients.remove(request.sid)
+            # Clean up nickname entries on disconnect
+            if request.sid in nicknames:
+                del nicknames[request.sid]
             emit('peer_left', request.sid, room=room_id)
 
+# Changes made to join_room to handle duplicate nicknames
 @socketio.on('join_room')
 def handle_join(data):
     # peer joins room to find counterpart
     room_id = data['room']
+    player_username = data.get('username', 'Guest') # Get username from client
 
     join_room(room_id)
 
     if room_id not in rooms:
         rooms[room_id] = []
 
+    # Generates a unique nickname for this player
+    unique_nickname = get_unique_nickname(room_id, player_username)
+
+    # Stores the nickname associated with this SID
+    nicknames[request.sid] = unique_nickname
+
     if request.sid not in rooms[room_id]:
         rooms[room_id].append(request.sid)
 
-    print(f"User {request.sid} has joined room {room_id}!")
+    # Modified to updated print to show both original and nickname
+    print(f"User {player_username} (as {unique_nickname}) has joined room {room_id}!")
 
-    #notify other peer
-    emit('peers', rooms[room_id], to=request.sid)
-    emit('new_peer', request.sid, room=room_id, include_self=False) 
-    # Changed 'new_peers' to 'new_peer' for consistency
+    # Creates a list of players with their display names
+    players_in_room = []
+    for sid in rooms[room_id]:
+        if sid in nicknames:
+            players_in_room.append({
+                'sid': sid,
+                'nickname': nicknames[sid]
+            })
 
+    #notify other peer (MODIFIED: send nickname data instead of just SIDs)
+    emit('peers', players_in_room, to=request.sid)
+    # Changed 'new_peers' to 'new_peer' for consistency (MODIFIED: send nickname data)
+    emit('new_peer', {
+        'sid': request.sid,
+        'nickname': unique_nickname
+    }, room=room_id, include_self=False)
+    
+    # MODIFIED: Send the joining player their assigned nickname
+    emit('nickname_assigned', {
+        'nickname': unique_nickname,
+        'original_name': player_username
+    }, to=request.sid)
+
+# MODIFIED: Updated ready to include nickname
 @socketio.on('ready')
 def handle_ready(data):
     room_id = data['room']
-    emit('ready', request.sid, room=room_id, include_self=False)
+    emit('ready', {
+        'sid': request.sid,
+        'nickname': nicknames.get(request.sid, 'Unknown')
+    }, room=room_id, include_self=False)
 
-
+# MODIFIED: Updated signal to include nickname
 @socketio.on('signal')
 def handle_signal(data):
     # relay WebRTC response/ice/offer to other peer
     target = data['to']
 
-
-    # let other users in the room know what the response is
+    # let other users in the room know what the response is (MODIFIED: include sender nickname)
     emit('signal', {
         'from': request.sid,
+        'from_nickname': nicknames.get(request.sid, 'Unknown'),
         'data': data['data']
-    }, to=target) 
+    }, to=target)
 
-# Additions and many modifications made to the following lines of code
+# Additions and many modifications made to the following lines of code (MODIFIED: added decorator and nickname cleanup)
+@socketio.on('leave_room')
 def handle_leave(data):
     """Handle a user leaving a room"""
     room_id = data['room']
     if room_id in rooms and request.sid in rooms[room_id]:
         rooms[room_id].remove(request.sid)
+        # MODIFIED: Clean up nickname entries on leave
+        if request.sid in nicknames:
+            del nicknames[request.sid]
         leave_room(room_id)
         emit('peer_left', request.sid, room=room_id)
         print(f"User {request.sid} left room {room_id}")
