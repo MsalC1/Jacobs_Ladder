@@ -2,11 +2,12 @@ services:
   - type: web
     name: game-backend
     runtime: python
-    repo: https://github.com/yourusername/your-repo  # Update with your repo URL
+    repo: https://github.com/MsalC1/Jacobs_Ladder  # Update with your repo URL
+    rootDir: backend
     plan: free
     region: oregon
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app -k eventlet -w 1 --bind 0.0.0.0:$PORT
+    startCommand: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 -b 0.0.0.0:$PORT app:app
     envVars:
       - key: SECRET_KEY
         generateValue: true
