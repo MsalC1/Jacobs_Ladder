@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-to-a-secure-k
 CORS(app, origins=[
     'http://localhost:3000',
     'http://localhost:5000',
-    'https://your-frontend-domain.onrender.com' # Update with your frontend Render URL
+    'https://your-frontend-domain.onrender.com' # don't have a front end deployed yet...
 ])
 
 # Socket.IO with production settings
