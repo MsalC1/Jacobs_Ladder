@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-to-a-secure-key-in-production')
 
 # Configure CORS for production
+# SHOULD REMOVE THIS, REDUNDANT...
 CORS(app, origins=[
     'http://localhost:3000',
     'http://localhost:5000',
@@ -21,7 +22,7 @@ CORS(app, origins=[
 # Socket.IO with production settings
 socketio = SocketIO(app, 
                     cors_allowed_origins='*',
-                    async_mode='eventlet',
+                    async_mode='gevent',
                     ping_timeout=60,
                     ping_interval=25)
 
