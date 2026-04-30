@@ -1,15 +1,15 @@
 import * as Phaser from "phaser";
-import MainScene from "./scenes/mainScene";
+import MainScene from "./scenes/MainScene";
 
 export function createGame(parent) {
     const config = {
         type: Phaser.AUTO,
         width: '50%',
-        height: '90%',
+        height: '100%',
         parent,
         scale: {
             mode: Phaser.Scale.NONE,
-            // autoCenter: Phaser.Scale.CENTER_BOTH
+            autoCenter: Phaser.Scale.CENTER_BOTH
         },
         scene: [MainScene],
         physics: {
