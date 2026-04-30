@@ -7,14 +7,18 @@ import JumpMeter from "../systems/JumpMeter";
 
 export default class MainScene extends Phaser.Scene  {
     preload(){
-        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/walk-run-facing-right-512px-x-512px-per-frame.png", import.meta.url).href;
-        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/walk-run-facing-left-512px-x-512px-per-frame.png", import.meta.url).href;
+        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/Character_WalkingRight.png", import.meta.url).href;
+        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/Character_WalkingLeft.png", import.meta.url).href;
 
+        this.load.image('background', 'assets/Locations/HELL.png');
         this.load.spritesheet('player-right', playerRight, { frameWidth: 512, frameHeight: 512 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 512, frameHeight: 512 });
     }
 
     create(){
+
+        this.add.image(1920, 1080, 'background');
+
         this.createPlayerAnimations();
         
         this.player             = new Player(this, 400, 400);
