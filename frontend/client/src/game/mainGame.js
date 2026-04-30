@@ -5,7 +5,7 @@ export function createGame(parent) {
     const config = {
         type: Phaser.AUTO,
         width: '50%',
-        height: '100%',
+        height: '90%',
         parent,
         scale: {
             mode: Phaser.Scale.NONE,
