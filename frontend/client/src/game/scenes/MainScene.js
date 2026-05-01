@@ -12,6 +12,11 @@ export default class MainScene extends Phaser.Scene  {
 
 
         // TileSetMap:
+
+        // ******NOTE********
+        // Tileset png image must be the same one used in Tiled and must be put in /assets/tilesets
+        // The tilepam.tmj goes in the maps folder
+
         const tile_art_path = new URL("../../assets/tilesets/Natural.png", import.meta.url).href;
         const tilemap_path  = new URL("../../assets/maps/Hell-Tilemap.tmj", import.meta.url).href;
 
@@ -34,9 +39,10 @@ export default class MainScene extends Phaser.Scene  {
         
         this.createPlayerAnimations();
 
+
         const map = this.make.tilemap({ key: "map" });
-        const tiles = map.addTilesetImage("Test-Hell-Tileset", "tiles");
-        const platformLayer = map.createLayer("Tile Layer 1", tiles, 0, 0);
+        const tiles = map.addTilesetImage("Test-Hell-Tileset", "tiles"); // "Test-Hell-Tileset" is the same tileset name as set in Tiled
+        const platformLayer = map.createLayer("Tile Layer 1", tiles, 0, 0); // "Tile Layer 1" is the must name as seen in the .tmj file or else ts wont work.
 
         platformLayer.setCollisionByExclusion([-1]);
 
