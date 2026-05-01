@@ -1,9 +1,10 @@
+import os
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
-SECRET_KEY_AUTH = 'change-this-to-a-very-long-random-string'
+SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
 
 def create_token(player_id, username):
     payload = {

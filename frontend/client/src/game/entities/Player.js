@@ -1,14 +1,14 @@
 export default class Player {
     constructor(scene, x, y) {
-        const WIDTH_PX    = 512;
-        const HEIGHT_PX   = 512;
+        const WIDTH_PX    = 256;
+        const HEIGHT_PX   = 256;
 
-        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.125;  // 64px
-        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.125; // 64px
+        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.3;  // 64px
+        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.3; // 64px
 
-        const HITBOX_WIDTH_PX     = WIDTH_PX * 0.146484375;   // 75px
+        const HITBOX_WIDTH_PX     = WIDTH_PX * 0.246484375;   // 75px
         const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.80078125;   // 410px
-        const HITBOX_OFFSET_X_PX  = WIDTH_PX * 0.4296875;     // 220px
+        const HITBOX_OFFSET_X_PX  = WIDTH_PX * 0.236875;     // 220px
         const HITBOX_OFFSET_Y_PX  = HEIGHT_PX * 0.1953125;    // 100px
 
         this.scene = scene;
