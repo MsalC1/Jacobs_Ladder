@@ -9,7 +9,7 @@ import re # Added for nickname number detection
 app = Flask(__name__)
 
 # Use the environment variable for secret key in production
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-to-a-secure-key-in-production')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Configure CORS for production
 # SHOULD REMOVE THIS, REDUNDANT...
