@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
-SECRET_KEY_AUTH = 'change-this-to-a-very-long-random-string'
+SECRET_KEY_AUTH = '9421189bc13817ef4aa6f8b66490c4fc'
 
 def create_token(player_id, username):
     payload = {
