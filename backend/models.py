@@ -13,7 +13,7 @@ def init_db(app):
         # Render provides PostgreSQL
         # Fix for Render's postgresql:// vs postgres://
         if database_url.startswith('postgres://'):
-            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+            database_url = database_url.replace('postgres://', 'postgres://', 1)
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'pool_pre_ping': True,
