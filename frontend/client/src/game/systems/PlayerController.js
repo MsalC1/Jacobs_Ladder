@@ -2,7 +2,7 @@ export default class PlayerController {
     constructor(scene, player) {
         this.scene = scene;
         this.player = player;
-        this.speed = 160;
+        this.speed = 300;
 
         this.keys = scene.input.keyboard.addKeys("W,A,S,D");
     }
@@ -17,6 +17,10 @@ export default class PlayerController {
         } else {
             this.player.setVelocityX(0);
             this.player.playIdle();
+        }
+
+        if (this.keys.W.isDown) {
+            this.player.setVelocityY(-1000);
         }
     }
 }
