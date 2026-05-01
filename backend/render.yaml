@@ -2,7 +2,7 @@ services:
   - type: web
     name: game-backend
     runtime: python
-    pythonVersion: 3.13.0  # Line added for a compatible python version
+    pythonVersion: 3.12.3  # Line added for a compatible python version
     repo: https://github.com/MsalC1/Jacobs_Ladder  # Update with your repo URL
     rootDir: backend
     plan: free
