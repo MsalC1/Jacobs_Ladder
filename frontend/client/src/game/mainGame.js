@@ -15,7 +15,9 @@ export function createGame(parent) {
         physics: {
             default: "arcade",
             arcade: { 
-                gravity: { y : 600 },
+                gravity: { y : 1000 },
+                fps: 60,
+                fixedStep: true,
                 debug: true
             },
         },

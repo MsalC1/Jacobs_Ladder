@@ -3,13 +3,13 @@ export default class Player {
         const WIDTH_PX    = 256;
         const HEIGHT_PX   = 256;
 
-        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.3;  // 64px
-        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.3; // 64px
+        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.25;  // 64px
+        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.25; // 64px
 
-        const HITBOX_WIDTH_PX     = WIDTH_PX * 0.246484375;   // 75px
-        const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.80078125;   // 410px
-        const HITBOX_OFFSET_X_PX  = WIDTH_PX * 0.236875;     // 220px
-        const HITBOX_OFFSET_Y_PX  = HEIGHT_PX * 0.1953125;    // 100px
+        const HITBOX_WIDTH_PX     = WIDTH_PX * 0.25;   // 75px
+        const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.7;   // 410px
+        const HITBOX_OFFSET_X_PX  = SPRITE_WIDTH_PX * 1.5;     // 220px
+        const HITBOX_OFFSET_Y_PX  = SPRITE_HEIGHT_PX * 1.15;    // 100px
 
         this.scene = scene;
         this.direction = "right";

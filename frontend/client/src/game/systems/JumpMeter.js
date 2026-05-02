@@ -90,13 +90,19 @@ export default class JumpMeter {
         let jumpPower;
 
         if (distanceFromCenter <= 5) {
-            jumpPower = -650;
-            console.log("Perfect jump!");
+
+            if (!this.player.isOnGround()){
+                jumpPower = -5000;
+                console.log("Perfect Secret jump!");
+            } else {
+                jumpPower = -1000;
+                console.log("Perfect jump!");
+            }
         } else if (distanceFromCenter <= 30) {
-            jumpPower = -500;
+            jumpPower = -700;
             console.log("Enhanced jump!");
         } else {
-            jumpPower = -350;
+            jumpPower = -500;
             console.log("Normal jump!");
         }
 
