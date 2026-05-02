@@ -10,15 +10,21 @@ export default class MainScene extends Phaser.Scene  {
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/Character_WalkingRight.png", import.meta.url).href;
         const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/Character_WalkingLeft.PNG", import.meta.url).href;
 
+        const jumpBar = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
+        const jumpBarBg  = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
 
+        this.load.image("jump-bar", jumpBar);
+        this.load.image("jump-bar-bg", jumpBarBg);
+
+ 
         // TileSetMap:
 
         // ******NOTE********
         // Tileset png image must be the same one used in Tiled and must be put in /assets/tilesets
         // The tilepam.tmj goes in the maps folder
 
-        const tile_art_path = new URL("../../assets/tilesets/Natural.png", import.meta.url).href;
-        const tilemap_path  = new URL("../../assets/maps/Hell-Tilemap.tmj", import.meta.url).href;
+        const tile_art_path = new URL("../../assets/tilesets/CastleTiles.png", import.meta.url).href;
+        const tilemap_path  = new URL("../../assets/maps/Castle-Tilemap.tmj", import.meta.url).href;
 
         this.load.image("tiles", tile_art_path);
         this.load.tilemapTiledJSON("map", tilemap_path);
@@ -31,20 +37,22 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     create(){
-        const bg = this.add.image(400, -950, "HELL");
+        const bg = this.add.image(400, 2150, "HELL");
 
         bg.setDisplaySize(800, 4300);
-        bg.setScrollFactor(0);
+        // bg.setScrollFactor(-10);
         bg.setDepth(-10);
         
         this.createPlayerAnimations();
 
 
         const map = this.make.tilemap({ key: "map" });
-        const tiles = map.addTilesetImage("Test-Hell-Tileset", "tiles"); // "Test-Hell-Tileset" is the same tileset name as set in Tiled
-        const platformLayer = map.createLayer("Tile Layer 1", tiles, 0, 0); // "Tile Layer 1" is the must name as seen in the .tmj file or else ts wont work.
+        const tiles = map.addTilesetImage("Castle-Tileset", "tiles"); // "Test-Hell-Tileset" is the same tileset name as set in Tiled
+        const backgroundLayer = map.createLayer("Background-Layer", tiles);
+        const platformLayer = map.createLayer("Platform-Layer", tiles, 0, 0); // "Tile Layer 1" is the must name as seen in the .tmj file or else ts wont work.
 
         platformLayer.setCollisionByExclusion([-1]);
+        backgroundLayer.setDepth(-5);
 
         // platformLayer.setCollisionBetween(1, 200);
 
