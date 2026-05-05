@@ -13,11 +13,11 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Configure CORS for production
 # SHOULD REMOVE THIS, REDUNDANT...
-CORS(app, origins=[
-    'http://localhost:3000',
-    'http://localhost:5000',
-    'https://your-frontend-domain.onrender.com' # don't have a front end deployed yet...
-])
+# CORS(app, origins=[
+#     'http://localhost:3000',
+#     'http://localhost:5000',
+#     'https://your-frontend-domain.onrender.com' # don't have a front end deployed yet...
+# ])
 
 # Socket.IO with production settings
 socketio = SocketIO(app, 

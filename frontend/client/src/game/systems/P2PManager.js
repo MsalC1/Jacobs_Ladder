@@ -13,7 +13,9 @@ export default class P2PManager {
 
        this.targetSID = null;
 
-       this.dataChannel = null
+       this.dataChannel = null;
+
+       this.peerJoined = null;
 
     }
 
@@ -76,7 +78,17 @@ export default class P2PManager {
 
         });
 
-        // on peer
+        // on peers
+        this.socket.on('peers', async (msg) => {
+            console.log("sending peers data to all clients") //debug
+            console.log(msg.players_in_room[0].nickname)
+
+            if (this.peerJoined){
+                this.peerJoined(msg.players_in_room);
+            }
+
+        })
+
 
         // on new_peer
         this.socket.on('new_peer', async (msg) => {

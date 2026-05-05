@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+
 function LobbyPage() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -8,28 +9,46 @@ function LobbyPage() {
     const { nickname } = location.state || {};
     const [roomCode, setRoomCode] = useState("");
 
-    function createRoom() {
-        const newRoomCode = Math.random().toString(36).slice(2, 7).toUpperCase();
+
+    function handleCreate() {
+
+
+        const fallbackRoomCode = Math.random().toString(36).slice(2, 7).toUpperCase(); // just in case the player presses new room without adding room code
+        
+        let srvrRoom
+
+        if (roomCode === "Enter room code"){
+            srvrRoom = fallbackRoomCode;
+        }
+        else {
+            srvrRoom = roomCode.trim().toUpperCase();
+        }
 
         navigate("/game", {
-        state: {
-            nickname: nickname || "Guest",
-            roomCode: newRoomCode,
-        },
-        });
+            state: {
+                nickname: nickname || "Guest",
+                roomCode: srvrRoom,
+            },
+            });
+
     }
 
-    function joinRoom(e) {
-        e.preventDefault();
+
+    function handleJoin(e){
+
+        const srvrRoom = roomCode.trim().toUpperCase();
 
         if (!roomCode.trim()) return;
 
+        e.preventDefault();
+
         navigate("/game", {
         state: {
             nickname: nickname || "Guest",
-            roomCode: roomCode.trim().toUpperCase(),
+            roomCode: srvrRoom,
         },
         });
+
     }
 
     return (
@@ -38,11 +57,11 @@ function LobbyPage() {
             <h1>Lobby</h1>
             <p>Player: {nickname || "Guest"}</p>
 
-            <button onClick={createRoom} style={styles.button}>
+            <button onClick={handleCreate} style={styles.button}>
             Create Room
             </button>
 
-            <form onSubmit={joinRoom} style={styles.form}>
+            <form onSubmit={handleCreate} style={styles.form}>
             <input
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
