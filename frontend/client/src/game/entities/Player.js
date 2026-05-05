@@ -76,4 +76,16 @@ export default class Player {
         const idleKey = this.direction === "left" ? "idle-left" : "idle-right"; // if facing left -> idle-left else -> idle-right
         this.sprite.anims.play(idleKey, true);
     }
+
+    getNetworkState() {
+        return {
+            x: this.sprite.x,
+            y: this.sprite.y,
+            velocityX: this.sprite.body.velocity.x,
+            velocityY: this.sprite.body.velocity.y,
+            direction: this.direction,
+            textureKey: this.sprite.texture.key,
+            animation: this.sprite.anims.currentAnim?.key || "idle-right",
+        };
+    }
 }

@@ -5,6 +5,9 @@ import Player from "../entities/Player"
 import PlayerController from "../systems/PlayerController";
 import JumpMeter from "../systems/JumpMeter";
 
+// Remote Player
+import RemotePlayer from "../entities/RemotePlayer";
+
 export default class MainScene extends Phaser.Scene  {
     preload(){
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
@@ -67,11 +70,26 @@ export default class MainScene extends Phaser.Scene  {
         this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);
 
         this.physics.add.collider(this.player.sprite, platformLayer);
+
+        this.remotePlayers = new Map();
+
+        this.updateRemotePlayer("test-player", {
+            x: 500,
+            y: 400,
+            nickname: "Test Player",
+            direction: "right",
+            textureKey: "player-right",
+            animation: "idle-right",
+        });
     }
 
     update(time, delta) {
         this.playerController.update(time, delta);
         this.jumpMeter.update(time, delta);
+
+        for (const remotePlayer of this.remotePlayers.values()) {
+            remotePlayer.update();
+        }
     }
 
     createPlayerAnimations() {
@@ -99,5 +117,38 @@ export default class MainScene extends Phaser.Scene  {
             frameRate: 1,
             repeat: -1
         });
+    }
+
+    addRemotePlayer(playerId, state) {
+        // if the player id already exitst then dont create anything
+        if (this.remotePlayers.has(playerId)) return;
+
+        // otherwise create a new player id
+        const remotePlayer = new RemotePlayer(
+            this,
+            state.x,
+            state.y,
+            state.nickname || "Remote Player"
+        );
+
+        this.remotePlayers.set(playerId, remotePlayer);
+    }
+
+    updateRemotePlayer(playerId, state) {
+        if (!this.remotePlayers.has(playerId)) {
+            this.addRemotePlayer(playerId, state);
+        }
+
+        const remotePlayer = this.remotePlayers.get(playerId);
+        remotePlayer.updateState(state);
+    }
+
+    removeRemotePlayer(playerId) {
+        const remotePlayer = this.remotePlayers.get(playerId);
+
+        if (!remotePlayer) return;
+
+        remotePlayer.destroy();
+        this.remotePlayer.delete(playerId);
     }
 }
