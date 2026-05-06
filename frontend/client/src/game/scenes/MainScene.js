@@ -75,7 +75,7 @@ export default class MainScene extends Phaser.Scene  {
 
         this.remotePlayers = new Map();
 
-        this.networkManager = this.game.registery.get("networkManager");
+        this.networkManager = this.game.registry.get("networkManager");
 
         this.networkManager.onPlayerState = (playerId, state) => {
             this.updateRemotePlayer(playerId, state);
@@ -93,7 +93,7 @@ export default class MainScene extends Phaser.Scene  {
         if (this.networkManager && this.player) {
             if (!this.lastNetworkSend) this.lastNetworkSend = 0;
 
-            if (!this.lastNetworkSend > 50) {
+            if (time - this.lastNetworkSend > 50) {
                 this.lastNetworkSend = time;
 
                 // Sends local player state to networkManager (p2p manager)
@@ -165,6 +165,6 @@ export default class MainScene extends Phaser.Scene  {
         if (!remotePlayer) return;
 
         remotePlayer.destroy();
-        this.remotePlayer.delete(playerId);
+        this.remotePlayers.delete(playerId);
     }
 }
