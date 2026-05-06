@@ -10,6 +10,8 @@ export default class P2PManager {
        this.roomID = roomID;
 
        this.nickname = nickname;
+       
+       this.onPlayerState = null;
 
        this.targetSID = null;
 
@@ -111,23 +113,56 @@ export default class P2PManager {
 
         // establish p2p message
         this.peerConnection.ondatachannel = (event) => {
-            const recieveChannel = event.channel;
-            recieveChannel.onmessage = (e) => {
-                console.log("P2P Connection Message:", e.data);
-                // do things with remoteplayer here!!!
+            this.dataChannel = event.channel;
+
+            this.dataChannel.onopen = () => {
+                console.log("Recieve data channel open");
             };
+
+            this.dataChannel.onmessage = (e) => {
+                this.handleDataMessage(e.data);
+            }
         };
+    }
+
+    handleDataMessage(rawData) {
+        const message = JSON.parse(rawData);
+
+        if (message.type === "player-state") {
+            this.onPlayerState?.(message.playerId, message.state);
+        }
+    }
+
+    sendPlayerState(state) {
+        if (!this.dataChannel) return;
+        if (this.dataChannel.readyState !== "open") return;
+
+        this.dataChannel.send(JSON.stringify({
+            type: "player-state",
+            playerId: this.socket.id,
+            nickname: this.nickname,
+            state,
+        }));
     }
 
     // start the webRTC back and forth
     // ONLY USE WHEN >2 PLAYERS IN A ROOM!!!
     async startCall() {
+        this.dataChannel = this.peerConnection.createDataChannel("game-state");
+        this.dataChannel.onopen = () => {
+            console.log("Data channel open");  
+        };
+
+        this.dataChannel.onmessage = (e) => {
+            this.handleDataMessage(e.data);
+        };
+
         const offer = await this.peerConnection.createOffer();
         await this.peerConnection.setLocalDescription(offer);
 
         this.socket.emit('signal', {
             to: this.targetSID,
-            data: {type: 'offer', payload: offer}
+            data: { type: 'offer', payload: offer }
         })
     }
 

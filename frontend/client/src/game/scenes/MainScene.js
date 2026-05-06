@@ -71,16 +71,15 @@ export default class MainScene extends Phaser.Scene  {
 
         this.physics.add.collider(this.player.sprite, platformLayer);
 
+        // Remote Player Creation
+
         this.remotePlayers = new Map();
 
-        this.updateRemotePlayer("test-player", {
-            x: 500,
-            y: 400,
-            nickname: "Test Player",
-            direction: "right",
-            textureKey: "player-right",
-            animation: "idle-right",
-        });
+        this.networkManager = this.game.registery.get("networkManager");
+
+        this.networkManager.onPlayerState = (playerId, state) => {
+            this.updateRemotePlayer(playerId, state);
+        };
     }
 
     update(time, delta) {
@@ -89,6 +88,23 @@ export default class MainScene extends Phaser.Scene  {
 
         for (const remotePlayer of this.remotePlayers.values()) {
             remotePlayer.update();
+        }
+
+        if (this.networkManager && this.player) {
+            if (!this.lastNetworkSend) this.lastNetworkSend = 0;
+
+            if (!this.lastNetworkSend > 50) {
+                this.lastNetworkSend = time;
+
+                // Sends local player state to networkManager (p2p manager)
+                this.networkManager.sendPlayerState({
+                    x: this.player.sprite.x,
+                    y: this.player.sprite.y,
+                    direction: this.player.direction,
+                    textureKey: this.player.sprite.texture.key,
+                    animation: this.player.sprite.anims.currentAnim?.key || "idle-right",
+                });
+            }
         }
     }
 
