@@ -93,10 +93,11 @@ export default class P2PManager {
         // on peers
         this.socket.on('peers', async (msg) => {
             console.log("sending peers names to all clients") //debug
-            console.log(msg.players_in_room[0].nickname)
+            console.log(msg);
+            const playersInRoom = Array.isArray(msg.players_in_room) ? msg.players_in_room : []; // if player list is empty assign an empty array
 
             if (this.peerJoined){
-                this.peerJoined(msg.players_in_room);
+                this.peerJoined(playersInRoom);
             }
 
         })
