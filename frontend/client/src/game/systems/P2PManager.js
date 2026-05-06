@@ -36,10 +36,16 @@ export default class P2PManager {
 
         // get ice candidates and respond to them
         this.peerConnection.onicecandidate = (event) => {
+            console.log("peer ICE candidate");
             if(event.candidate && this.targetSID) {
                 this.socket.emit('signal', {to: this.targetSID, data: {type: 'candidate', payload: event.candidate}}) // check if this is correct?
             }
         };
+
+        // FOR DEBUG
+        this.peerConnection.oniceconnectionstatechange = () => {
+            console.log("ICE State: ", this.peerConnection.iceConnectionState);
+        }
 
 
         // SIGNALING SERVER FUNCTIONS
@@ -52,6 +58,8 @@ export default class P2PManager {
 
             // listen for offer type signals
             if (type === 'offer'){
+
+                console.log("viewing offer");
                 await this.peerConnection.setRemoteDescription( new RTCSessionDescription(payload));
                 const answer = await this.peerConnection.createAnswer();
                 await this.peerConnection.setLocalDescription(answer);
@@ -64,11 +72,13 @@ export default class P2PManager {
 
             // listen for answer type signals
             if (type === 'answer'){
+                console.log("viewing answer")
                 await this.peerConnection.setRemoteDescription( new RTCSessionDescription(payload) )
             }
 
             // listen for candidates type signals
             if (type === 'candidate'){
+                console.log("viewing candidate");
                 try {
                     await this.peerConnection.addIceCandidate( new RTCIceCandidate(payload));
                 } catch (e) {
@@ -82,7 +92,7 @@ export default class P2PManager {
 
         // on peers
         this.socket.on('peers', async (msg) => {
-            console.log("sending peers data to all clients") //debug
+            console.log("sending peers names to all clients") //debug
             console.log(msg.players_in_room[0].nickname)
 
             if (this.peerJoined){
@@ -148,6 +158,7 @@ export default class P2PManager {
     // start the webRTC back and forth
     // ONLY USE WHEN >2 PLAYERS IN A ROOM!!!
     async startCall() {
+        console.log("starting call")
         this.dataChannel = this.peerConnection.createDataChannel("game-state");
         this.dataChannel.onopen = () => {
             console.log("Data channel open");  
