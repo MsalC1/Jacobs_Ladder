@@ -97,19 +97,14 @@ export default class P2PManager {
                     console.error("Error adding ICE candidate:", e);
                 }
             }
-
-
-
         });
 
         // on peers
         this.socket.on('peers', async (msg) => {
             console.log("sending peers names to all clients") //debug
-            console.log(msg);
-
-
+            
             const playersInRoom = Array.isArray(msg) ? msg : Array.isArray(msg.players_in_room) ? msg.players_in_room : []; // if player list is empty assign an empty array
-
+            
             this.peerJoined?.(playersInRoom);
         })
 

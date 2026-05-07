@@ -87,22 +87,26 @@ export default class JumpMeter {
     releaseJump() {
         const distanceFromCenter = Math.abs(this.value);
 
+        const JUMP_NORMAL = -550;
+        const JUMP_ENHANCED = -700;
+        const JUMP_PERFECT = -850;
+
         let jumpPower;
 
         if (distanceFromCenter <= 5) {
 
             if (!this.player.isOnGround()){
-                jumpPower = -5000;
+                jumpPower = -900;
                 console.log("Perfect Secret jump!");
             } else {
-                jumpPower = -1000;
+                jumpPower = JUMP_PERFECT;
                 console.log("Perfect jump!");
             }
         } else if (distanceFromCenter <= 30) {
-            jumpPower = -700;
+            jumpPower = JUMP_ENHANCED;
             console.log("Enhanced jump!");
         } else {
-            jumpPower = -500;
+            jumpPower = JUMP_NORMAL;
             console.log("Normal jump!");
         }
 

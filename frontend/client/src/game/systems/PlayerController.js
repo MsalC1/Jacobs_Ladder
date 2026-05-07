@@ -24,7 +24,6 @@ export default class PlayerController {
             if (Math.abs(body.velocity.x) < 5) {
                 this.player.setVelocityX(0);
             }
-
             this.player.playIdle();
         }
 

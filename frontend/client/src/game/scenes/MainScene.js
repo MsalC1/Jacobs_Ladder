@@ -42,7 +42,7 @@ export default class MainScene extends Phaser.Scene  {
     create(){
         const bg = this.add.image(400, 2150, "HELL");
 
-        bg.setDisplaySize(800, 4300);
+        bg.setDisplaySize(800, 4320);
         bg.setDepth(-10);
         
         this.createPlayerAnimations();
@@ -84,8 +84,8 @@ export default class MainScene extends Phaser.Scene  {
             this.handlePushMessage(message);
         }
 
-        // Interact Key
-        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        // Interact Key (for the pushing players mechanic)
+        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
     }
 
     update(time, delta) {
