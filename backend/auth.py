@@ -4,7 +4,12 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
+# PROD
 SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
+
+#TESTING
+# SECRET_KEY_AUTH = "change-me"
+
 
 def create_token(player_id, username):
     payload = {

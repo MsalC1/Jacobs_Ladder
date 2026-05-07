@@ -11,13 +11,18 @@ app = Flask(__name__)
 # Use the environment variable for secret key in production
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
+#Testing
+# app.config['SECRET_KEY'] = "change-me"
+
+
 # Configure CORS for production
 # SHOULD REMOVE THIS, REDUNDANT...
-# CORS(app, origins=[
-#     'http://localhost:3000',
-#     'http://localhost:5000',
-#     'https://your-frontend-domain.onrender.com' # don't have a front end deployed yet...
-# ])
+CORS(app, origins=[
+    'http://localhost:3000',
+    'http://localhost:5000' # don't have a front end deployed yet...
+     ],
+     resources={r"/*": {"origins": "http://localhost:3000"}}
+)
 
 # Socket.IO with production settings
 socketio = SocketIO(app, 
@@ -92,7 +97,11 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    print(data)
     player = Player.query.filter_by(username=data['username']).first()
+
+    print(player.id)
+    print(player.username)
     
     if player and player.check_password(data['password']):
         token = create_token(player.id, player.username)
