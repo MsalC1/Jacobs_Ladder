@@ -72,9 +72,13 @@ export default class MainScene extends Phaser.Scene  {
 
         this.networkManager = this.game.registry.get("networkManager");
 
+        this.networkManager.onPeerLeave = (playerId) => {
+            this.removeRemotePlayer(playerId);
+        }
+
         this.networkManager.onPlayerState = (playerId, state) => {
             this.updateRemotePlayer(playerId, state);
-        };
+        }
 
         this.networkManager.onPush = (message) => {
             this.handlePushMessage(message);

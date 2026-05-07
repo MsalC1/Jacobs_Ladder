@@ -21,6 +21,8 @@ export default class P2PManager {
 
        this.peerJoined = null;
 
+       this.onPeerLeft = null;
+
     }
 
     async joinRoom() {
@@ -46,6 +48,18 @@ export default class P2PManager {
         this.peerConnection.oniceconnectionstatechange = () => {
             console.log("ICE State: ", this.peerConnection.iceConnectionState);
         }
+
+        // When user leaves room:
+        this.socket.on("peer_left", (msg) => {
+            console.log("Peer left Test:",msg);
+
+            this.onPeerLeft?.(msg.sid);
+            this.peerLeft?.(msg.sid);
+
+            if (this.onPeerLeft) {
+                this.onPeerLeft(msg.sid);
+            }
+        });
 
 
         // SIGNALING SERVER FUNCTIONS

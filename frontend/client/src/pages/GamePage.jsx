@@ -39,10 +39,14 @@ function GamePage(){
         gameInstanceRef.current = game;
 
         manager.peerJoined = (gotPlayers) => {
-            console.log("setting players to current players in room") //debug
-            console.log(gotPlayers)
+            console.log("setting players to current players in room"); //debug
+            console.log(gotPlayers);
             setPlayers(gotPlayers);
         };
+
+        manager.peerLeft = (sid => {
+            setPlayers((prev) => prev.filter((p) => p.sid !== sid));
+        });
 
         manager.joinRoom();
         return () => {
