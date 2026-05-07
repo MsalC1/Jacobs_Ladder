@@ -85,7 +85,25 @@ export default class MainScene extends Phaser.Scene  {
         }
 
         // Interact Key
-        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+
+        
+        this.debugGraphics = this.physics.world.createDebugGraphic();
+        this.debugGraphics.setVisible(false);
+        this.physics.world.drawDebug = false;
+
+        this.input.keyboard.on('keydown-H', () => {
+
+            this.physics.world.drawDebug = !this.physics.world.drawDebug;
+
+            if (!this.physics.world.drawDebug){
+                this.debugGraphics.setVisible(false);
+            }
+            else {
+                this.debugGraphics.setVisible(true);
+            }
+
+        });
     }
 
     update(time, delta) {

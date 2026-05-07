@@ -19,7 +19,7 @@ export function createGame(parent, gameData) {
                 gravity: { y : 600 },
                 fps: 60,
                 fixedStep: true,
-                debug: true
+                debug: false
             },
         },
         callbacks: {
