@@ -11,13 +11,18 @@ app = Flask(__name__)
 # Use the environment variable for secret key in production
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
+#Testing
+# app.config['SECRET_KEY'] = "change-me"
+
+
 # Configure CORS for production
 # SHOULD REMOVE THIS, REDUNDANT...
-# CORS(app, origins=[
-#     'http://localhost:3000',
-#     'http://localhost:5000',
-#     'https://your-frontend-domain.onrender.com' # don't have a front end deployed yet...
-# ])
+CORS(app, origins=[
+    'http://localhost:3000',
+    'http://localhost:5000' # don't have a front end deployed yet...
+     ],
+     resources={r"/*": {"origins": "http://localhost:3000"}}
+)
 
 # Socket.IO with production settings
 socketio = SocketIO(app, 
@@ -38,6 +43,29 @@ with app.app_context():
 # Store room data - SIDs list and nicknames tracking
 rooms = {}  # room_id -> list of SIDs
 nicknames = {}  # sid -> display nickname (for duplicate name handling)
+
+# Three validation functions 
+def validate_email(email):
+    """Basic email validation"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+def validate_username(username):
+    """Username validation: 3-50 characters, alphanumeric + underscore"""
+    if len(username) < 3 or len(username) > 50:
+        return False
+    pattern = r'^[a-zA-Z0-9_]+$'
+    return re.match(pattern, username) is not None
+
+def validate_password(password):
+    """Password validation: minimum 8 characters, at least one letter and one number"""
+    if len(password) < 8:
+        return False
+    has_letter = bool(re.search(r'[a-zA-Z]', password))
+    has_digit = bool(re.search(r'\d', password))
+    return has_letter and has_digit
+
+# End of validation functions
 
 # Function to handle duplicate nicknames in a room
 def get_unique_nickname(room_id, requested_name):
@@ -76,29 +104,132 @@ def get_unique_nickname(room_id, requested_name):
         
     return f"{base_name} {counter}"
 
+#@app.route('/register', methods=['POST'])
+#def register():
+#    data = request.get_json()
+#    if Player.query.filter_by(username=data['username']).first():
+#        return jsonify({'error': 'Username already exists'}), 400
+    
+#    new_player = Player(username=data['username'], email=data['email'])
+#    new_player.set_password(data['password'])
+    
+#    db.session.add(new_player)
+#    db.session.commit()
+#    return jsonify({'message': 'Player created successfully'}), 201
+
+# Entire /register route replaced
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    if Player.query.filter_by(username=data['username']).first():
-        return jsonify({'error': 'Username already exists'}), 400
-    
-    new_player = Player(username=data['username'], email=data['email'])
-    new_player.set_password(data['password'])
-    
-    db.session.add(new_player)
-    db.session.commit()
-    return jsonify({'message': 'Player created successfully'}), 201
+    """Register a new user with hashed password"""
+    try:
+        data = request.get_json()
 
+        if not data:
+            return jsonify({'error', 'No data provided'}), 400
+        
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip()
+        password = data.get('password', '')
+
+        # Validation 
+        if not username or not email or not password:
+            return jsonify({'error': 'Username, email, and password are required'}),
+
+        if not validate_username(username):
+            return jsonify({
+                'error': 'Username must be 3-50 characters and contain only letters, numbers, and underscores'
+            }), 400
+        
+        if not validate_email(email):
+            return jsonify({'error': 'Invalid email format'}), 400
+        
+        if not validate_password(password):
+            return jsonify({
+                'error': 'Password must be at least 8 characters and contain at least one letter and one number'
+            }), 400
+        
+        if Player.query.filter_by(username=username).first():
+            return jsonify({'error': 'Username already exists'}), 400
+        
+        if Player.query.filter_by(email=email).first():
+            return jsonify({'error': 'Email already registered'}), 400
+        
+        new_player = Player(username=username, email=email)
+        new_player.set_password(password)
+        
+        db.session.add(new_player)
+        db.session.commit()
+        
+        token = create_token(new_player.id, new_player.username)
+
+        return jsonify({
+            'message': 'Player created successfully',
+            'token': token,
+            'player': {
+                'id': new_player.id,
+                'username': new_player.username,
+                'email': new_player.email,
+                'total_wins': new_player.total_wins,
+                'total_games': new_player.total_games,
+                'highest_level': new_player.highest_level
+            }
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Registration error: {str(e)}")
+        return jsonify({'error': 'Registration failed. Please try again.'}), 500
+
+#@app.route('/login', methods=['POST'])
+#def login():
+#    data = request.get_json()
+#    player = Player.query.filter_by(username=data['username']).first()
+    
+#    if player and player.check_password(data['password']):
+#        token = create_token(player.id, player.username)
+#        return jsonify({'token': token})
+    
+#    return jsonify({'error': 'Invalid credentials'}), 401
+
+# Entire /login route replaced
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    player = Player.query.filter_by(username=data['username']).first()
-    
-    if player and player.check_password(data['password']):
+    """Login user with username/password"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        
+        if not username or not password:
+            return jsonify({'error': 'Username and password are required'}), 400
+        
+        player = Player.query.filter_by(username=username).first()
+        
+        if not player or not player.check_password(password):
+            return jsonify({'error': 'Invalid username or password'}), 401
+        
         token = create_token(player.id, player.username)
-        return jsonify({'token': token})
-    
-    return jsonify({'error': 'Invalid credentials'}), 401
+
+        return jsonify({
+            'message': 'Login successful',
+            'token': token,
+            'player': {
+                'id': player.id,
+                'username': player.username,
+                'email': player.email,
+                'total_wins': player.total_wins,
+                'total_games': player.total_games,
+                'highest_level': player.highest_level
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return jsonify({'error': 'Login failed. Please try again.'}), 500
 
 @app.route('/profile', methods=['GET'])
 @token_required

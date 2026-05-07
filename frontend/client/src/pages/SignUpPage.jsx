@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function LoginPage() {
-    const [formData, setFormData] = useState({username: '', password: ''});
+function SignUpPage() {
+    const [formData, setFormData] = useState({username: '', password: '', email: ''});
     const navigate = useNavigate();
 
 
@@ -10,42 +10,28 @@ function LoginPage() {
         setFormData({...formData, [e.target.name]: e.target.value })
     }
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // send user data to login
         const xhttp = new XMLHttpRequest();
+        const data = JSON.stringify(formData);
         const method = "POST";
-        const data = JSON.stringify(formData)
-        const url = "http://localhost:5000/login" // change this to actual backend ref
-
+        const url = "http://localhost:5000/register" // change this to actual backend ref
 
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")
-
+        
+        console.log(data)
         xhttp.send(data);
 
         xhttp.onload = function() {
-            console.log("User Logged in with token: ", this.responseText);
-            routeLobby();
+            console.log("User succesfully created in");
         }
         xhttp.onerror = function() {
-            alert("Error: User not able to Log In")
+            alert("Error: User not able to sign up")
         }
-
-    }
-
-    function routeLobby(){
-        navigate("/lobby", {
-            state: {nickname: formData.username}
-        })
-        
-
-    }
-
-    function routeSignUp (){
-        
-        navigate("/signup")
 
     }
 
@@ -70,9 +56,16 @@ function LoginPage() {
                 style={styles.input}
                 />
 
-                <button type="submit" style={styles.button}>Log In</button>
+                <input
+                type="text"
+                name="email"
+                placeholder="Enter email"
+                onChange={handleChange}
+                style={styles.input}
+                />
+
+                <button type="submit" style={styles.button}>Sign Up</button>
             </form>
-             <button type="submit" style={styles.signUpButton} onClick={routeSignUp}>New to Jacobs Ladder? Sign Up!</button>
         </div>
     );
 }
@@ -107,19 +100,8 @@ const styles = {
         background: "#4CAF50",
         color: "white",
         cursor: "pointer",
-    }, 
-    signUpButton: {
-        padding: "10px",
-        fontSize: "16px",
-        borderRadius: "6px",
-        border: "none",
-        background: "#634caf",
-        color: "white",
-        cursor: "pointer",
-        marginTop: "20px"
-
     }
 
 };
 
-export default LoginPage;
+export default SignUpPage;
