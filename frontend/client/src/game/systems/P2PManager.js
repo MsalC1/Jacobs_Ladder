@@ -49,16 +49,14 @@ export default class P2PManager {
             console.log("ICE State: ", this.peerConnection.iceConnectionState);
         }
 
-        // When user leaves room:
+        // When user leaves room (ts not working):
         this.socket.on("peer_left", (msg) => {
             console.log("Peer left Test:",msg);
 
-            this.onPeerLeft?.(msg.sid);
-            this.peerLeft?.(msg.sid);
+            const sid = (typeof msg === "string") ? msg : msg.sid;
 
-            if (this.onPeerLeft) {
-                this.onPeerLeft(msg.sid);
-            }
+            this.onPeerLeft?.(sid);
+            this.peerLeft?.(sid);
         });
 
 
@@ -108,12 +106,11 @@ export default class P2PManager {
         this.socket.on('peers', async (msg) => {
             console.log("sending peers names to all clients") //debug
             console.log(msg);
-            const playersInRoom = Array.isArray(msg.players_in_room) ? msg.players_in_room : []; // if player list is empty assign an empty array
 
-            if (this.peerJoined){
-                this.peerJoined(playersInRoom);
-            }
 
+            const playersInRoom = Array.isArray(msg) ? msg : Array.isArray(msg.players_in_room) ? msg.players_in_room : []; // if player list is empty assign an empty array
+
+            this.peerJoined?.(playersInRoom);
         })
 
 
@@ -186,6 +183,18 @@ export default class P2PManager {
             forceX: pushData.forceX,
             forceY: pushData.forceY,
         }));
+    }
+
+    leaveRoom() {
+        this.socket.emit("leave_room", { room: this.roomID });
+
+        if (this.dataChannel) {
+            this.dataChannel.close();
+        }
+
+        if (this.peerConnection) {
+            this.peerConnection.close();
+        }
     }
 
     // start the webRTC back and forth

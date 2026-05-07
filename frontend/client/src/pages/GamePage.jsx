@@ -50,6 +50,7 @@ function GamePage(){
 
         manager.joinRoom();
         return () => {
+            manager.leaveRoom?.();
             socket.disconnect();
 
             if (gameInstanceRef.current) {

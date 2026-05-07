@@ -138,7 +138,7 @@ def handle_disconnect():
             # Clean up nickname entries on disconnect
             if request.sid in nicknames:
                 del nicknames[request.sid]
-            emit('peer_left', request.sid, room=room_id)
+            emit('peer_left', { 'sid': request.sid }, room=room_id)
 
 # Changes made to join_room to handle duplicate nicknames
 @socketio.on('join_room')
@@ -220,7 +220,7 @@ def handle_leave(data):
         if request.sid in nicknames:
             del nicknames[request.sid]
         leave_room(room_id)
-        emit('peer_left', request.sid, room=room_id)
+        emit('peer_left', { 'sid': request.sid }, room=room_id)
         print(f"User {request.sid} left room {room_id}")
 
 if __name__ == '__main__':
