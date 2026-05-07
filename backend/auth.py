@@ -4,8 +4,10 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
-# PROD
-SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
+#SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
+
+# Fallback value added to SECRET_KEY_AUTH
+SECRET_KEY_AUTH = os.environ('SECRET_KEY_AUTH', 'dev-jwt-secret-change-in-production')
 
 #TESTING
 # SECRET_KEY_AUTH = "change-me"
