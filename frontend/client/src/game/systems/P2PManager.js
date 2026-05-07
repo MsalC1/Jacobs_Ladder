@@ -151,7 +151,10 @@ export default class P2PManager {
         const message = JSON.parse(rawData);
 
         if (message.type === "player-state") {
-            this.onPlayerState?.(message.playerId, message.state);
+            this.onPlayerState?.(message.playerId, {
+                ...message.state,
+                nickname: message.nickname,
+            });
         }
 
         if (message.type === "push") {
