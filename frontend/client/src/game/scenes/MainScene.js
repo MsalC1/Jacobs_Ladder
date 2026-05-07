@@ -43,11 +43,9 @@ export default class MainScene extends Phaser.Scene  {
         const bg = this.add.image(400, 2150, "HELL");
 
         bg.setDisplaySize(800, 4300);
-        // bg.setScrollFactor(-10);
         bg.setDepth(-10);
         
         this.createPlayerAnimations();
-
 
         const map = this.make.tilemap({ key: "map" });
         const tiles = map.addTilesetImage("Castle-Tileset", "tiles"); // "Test-Hell-Tileset" is the same tileset name as set in Tiled
@@ -57,12 +55,10 @@ export default class MainScene extends Phaser.Scene  {
         platformLayer.setCollisionByExclusion([-1]);
         backgroundLayer.setDepth(-5);
 
-        // platformLayer.setCollisionBetween(1, 200);
-
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-        
+        // Player Creation, Camera and World Collider
         this.player             = new Player(this, 400, 400);
         this.playerController   = new PlayerController(this, this.player);
         this.jumpMeter          = new JumpMeter(this, this.player);
@@ -72,7 +68,6 @@ export default class MainScene extends Phaser.Scene  {
         this.physics.add.collider(this.player.sprite, platformLayer);
 
         // Remote Player Creation
-
         this.remotePlayers = new Map();
 
         this.networkManager = this.game.registry.get("networkManager");
@@ -80,6 +75,13 @@ export default class MainScene extends Phaser.Scene  {
         this.networkManager.onPlayerState = (playerId, state) => {
             this.updateRemotePlayer(playerId, state);
         };
+
+        this.networkManager.onPush = (message) => {
+            this.handlePushMessage(message);
+        }
+
+        // Interact Key
+        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     }
 
     update(time, delta) {
@@ -105,6 +107,11 @@ export default class MainScene extends Phaser.Scene  {
                     animation: this.player.sprite.anims.currentAnim?.key || "idle-right",
                 });
             }
+        }
+
+        // Push Mechanic
+        if (Phaser.Input.Keyboard.JustDown(this.interactKey)) {
+            this.tryPushRemotePlayer();
         }
     }
 
@@ -166,5 +173,41 @@ export default class MainScene extends Phaser.Scene  {
 
         remotePlayer.destroy();
         this.remotePlayers.delete(playerId);
+    }
+
+    tryPushRemotePlayer() {
+        for (const [playerId, remotePlayer] of this.remotePlayers) {
+            const touching = this.physics.overlap(
+                this.player.sprite,
+                remotePlayer.pushZone
+            );
+
+            if (!touching) continue;
+
+            const direction = this.player.sprite.x < remotePlayer.sprite.x ? 1 : -1;
+
+            // debug
+            console.log("Pushing the remote player with id: ", playerId);
+
+            this.networkManager?.sendPush({
+                targetPlayerId: playerId,
+                direction,
+                forceX: 400,
+                forceY: -150, // the remote player might fly up because of this...
+            });
+
+            break;
+        }
+    }
+
+    handlePushMessage(message) {
+        const myPlayerId = this.networkManager.socket.id;
+
+        if (message.targetPlayerId !== myPlayerId) return;
+
+        console.log("You have been pushed!");
+
+        this.player.sprite.setVelocityX(message.direction * message.forceX);
+        this.player.sprite.setVelocityY(message.forceY);
     }
 }

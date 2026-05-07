@@ -26,6 +26,8 @@ export default class Player {
         this.sprite.body.setOffset(HITBOX_OFFSET_X_PX, HITBOX_OFFSET_Y_PX);
 
         this.sprite.anims.play("idle-right");
+
+        this.sprite.setMaxVelocity(280, 900);
     }
 
     setVelocityX(value) {

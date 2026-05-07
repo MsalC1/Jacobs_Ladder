@@ -13,6 +13,8 @@ export default class P2PManager {
        
        this.onPlayerState = null;
 
+       this.onPush = null;
+
        this.targetSID = null;
 
        this.dataChannel = null;
@@ -30,9 +32,7 @@ export default class P2PManager {
 
     }
 
-
     setUpListeners() {
-
 
         // get ice candidates and respond to them
         this.peerConnection.onicecandidate = (event) => {
@@ -142,6 +142,10 @@ export default class P2PManager {
         if (message.type === "player-state") {
             this.onPlayerState?.(message.playerId, message.state);
         }
+
+        if (message.type === "push") {
+            this.onPush?.(message);
+        }
     }
 
     sendPlayerState(state) {
@@ -153,6 +157,20 @@ export default class P2PManager {
             playerId: this.socket.id,
             nickname: this.nickname,
             state,
+        }));
+    }
+
+    sendPush(pushData) {
+        if (!this.dataChannel) return;
+        if (this.dataChannel.readyState !== "open") return;
+
+        this.dataChannel.send(JSON.stringify({
+            type: "push",
+            fromPlayerId: this.socket.id,
+            targetPlayerId: pushData.targetPlayerId,
+            direction: pushData.direction,
+            forceX: pushData.forceX,
+            forceY: pushData.forceY,
         }));
     }
 
@@ -177,8 +195,4 @@ export default class P2PManager {
             data: { type: 'offer', payload: offer }
         })
     }
-
-
-
-
 }

@@ -22,6 +22,13 @@ export default class RemotePlayer {
         this.targetX = x;
         this.targetY = y;
         this.sprite.anims.play("idle-right");
+
+        // push hitbox for the remoteplayer:
+        this.pushZone = scene.add.zone(x, y, 90, 90);
+        scene.physics.add.existing(this.pushZone);
+
+        this.pushZone.body.setAllowGravity(false);
+        this.pushZone.body.setImmovable(true);
     }
 
     updateState(state) {
@@ -46,10 +53,13 @@ export default class RemotePlayer {
         this.sprite.y += (this.targetY - this.sprite.y) * 0.25;
 
         this.nameText.setPosition(this.sprite.x, this.sprite.y - 45);
+        
+        this.pushZone.setPosition(this.sprite.x, this.sprite.y);
     }
 
     destroy() {
         this.sprite.destroy();
         this.nameText.destroy();
+        this.pushZone.destroy();
     }
 }

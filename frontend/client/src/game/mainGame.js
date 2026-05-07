@@ -7,6 +7,7 @@ export function createGame(parent, gameData) {
         width: 800,
         height: "100%",
         parent,
+        disableVisibilityChange: true,
         scale: {
             mode: Phaser.Scale.NONE,
             autoCenter: Phaser.Scale.NO_CENTER,
