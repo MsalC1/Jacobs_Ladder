@@ -133,7 +133,7 @@ def register():
 
         # Validation 
         if not username or not email or not password:
-            return jsonify({'error': 'Username, email, and password are required'}),
+            return jsonify({'error': 'Username, email, and password are required'}), 401
 
         if not validate_username(username):
             return jsonify({

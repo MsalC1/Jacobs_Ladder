@@ -27,12 +27,24 @@ function SignUpPage() {
         xhttp.send(data);
 
         xhttp.onload = function() {
-            console.log("User succesfully created in");
+            if (xhttp.status >= 200 && xhttp.status < 300){
+                console.log("User created, routing to Lobby");
+                routeLobby();
+                
+            } else {
+                console.error("Server Error: ", xhttp.status, xhttp.responseText);
+            }
         }
         xhttp.onerror = function() {
             alert("Error: User not able to sign up")
         }
 
+    }
+
+    function routeLobby(){
+        navigate("/lobby", {
+            state: {nickname: formData.username}
+        })
     }
 
     return (
