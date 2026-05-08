@@ -7,7 +7,7 @@ from flask import request, jsonify
 #SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
 
 # Fallback value added to SECRET_KEY_AUTH
-SECRET_KEY_AUTH = os.environ('SECRET_KEY_AUTH', 'dev-jwt-secret-change-in-production')
+SECRET_KEY_AUTH = "haha" # os.environ('SECRET_KEY_AUTH', 'dev-jwt-secret-change-in-production')
 
 def create_token(player_id, username):
     payload = {

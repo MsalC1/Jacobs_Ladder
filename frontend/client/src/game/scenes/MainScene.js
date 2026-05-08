@@ -8,33 +8,45 @@ import JumpMeter from "../systems/JumpMeter";
 // Remote Player
 import RemotePlayer from "../entities/RemotePlayer";
 
+// Stages
+import { createHellStageOrder } from "../levels/stageConfig";
+
+// Level Manager
+import LevelManager from "../systems/LevelManager";
+
 export default class MainScene extends Phaser.Scene  {
     preload(){
+
+        // PLAYER ASSETS
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
         const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left.png", import.meta.url).href;
 
-        const jumpBar = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
-        const jumpBarBg  = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
+        const jumpBar       = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
+        const jumpBarBg     = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
 
         this.load.image("jump-bar", jumpBar);
         this.load.image("jump-bar-bg", jumpBarBg);
 
- 
-        // TileSetMap:
+        // TILESET IMAGES
+        const castle_image_path         = new URL("../../assets/tilesets/castles-tileset.png", import.meta.url).href;
+        const dungeon_crawl_image_path  = new URL("../../assets/tilesets/dungeon-tileset.png", import.meta.url).href;
+        const hell_image_path           = new URL("../../assets/tilesets/hell-tileset.png", import.meta.url).href;
 
-        // ******NOTE********
-        // Tileset png image must be the same one used in Tiled and must be put in /assets/tilesets
-        // The tilepam.tmj goes in the maps folder
+        this.hellStageChunks = createHellStageOrder();
 
-        const tile_art_path = new URL("../../assets/tilesets/CastleTiles.png", import.meta.url).href;
-        const tilemap_path  = new URL("../../assets/maps/Castle-Tilemap.tmj", import.meta.url).href;
+        for (const chunk of this.hellStageChunks) {
+            this.load.tilemapTiledJSON(chunk.key, chunk.path);
+        }
 
-        this.load.image("tiles", tile_art_path);
-        this.load.tilemapTiledJSON("map", tilemap_path);
+        this.load.image("castle-tiles", castle_image_path);
+        this.load.image("decor-tiles", dungeon_crawl_image_path);
+        this.load.image("hell-tiles", hell_image_path);
 
-        const background    = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
-
+        // BACKGROUND
+        const background = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
         this.load.image("HELL", background);
+
+        // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 256, frameHeight: 256 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
     }
@@ -47,27 +59,23 @@ export default class MainScene extends Phaser.Scene  {
         
         this.createPlayerAnimations();
 
-        const map = this.make.tilemap({ key: "map" });
-        const tiles = map.addTilesetImage("Castle-Tileset", "tiles"); // "Test-Hell-Tileset" is the same tileset name as set in Tiled
-        const backgroundLayer = map.createLayer("Background-Layer", tiles);
-        const platformLayer = map.createLayer("Platform-Layer", tiles, 0, 0); // "Tile Layer 1" is the must name as seen in the .tmj file or else ts wont work.
+        //*******************MAY NEED TO DELETE*****************/
 
-        platformLayer.setCollisionByExclusion([-1]);
-        backgroundLayer.setDepth(-5);
+        this.levelManager = new LevelManager(this, this.hellStageChunks);
+        this.levelManager.create();
 
-        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        const spawn = this.levelManager.spawnPoint;
 
         // Player Creation, Camera and World Collider
-        this.player             = new Player(this, 400, 400);
+        this.player             = new Player(this, spawn.x, spawn.y);
         this.playerController   = new PlayerController(this, this.player);
         this.jumpMeter          = new JumpMeter(this, this.player);
 
-        this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);
+        this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);  // modify ts
 
-        this.physics.add.collider(this.player.sprite, platformLayer);
+        this.levelManager.addPlayerColliders(this.player.sprite);
 
-        // Remote Player Creation
+        // REMOTE PLAYER AND NETWORK MANAGER
         this.remotePlayers = new Map();
 
         this.networkManager = this.game.registry.get("networkManager");
@@ -84,9 +92,10 @@ export default class MainScene extends Phaser.Scene  {
             this.handlePushMessage(message);
         }
 
-        // Interact Key
+        // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
-
+        
+        // DEBUG KEY
         this.debugGraphics = this.physics.world.createDebugGraphic();
         this.debugGraphics.setVisible(false);
         this.physics.world.drawDebug = false;
