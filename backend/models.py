@@ -56,7 +56,7 @@ class Player(db.Model):
 
     def check_password(self, password):
         """Verify password against hash"""
-        return self.check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash, password)
 
 class Game(db.Model):
     __tablename__ = 'games'

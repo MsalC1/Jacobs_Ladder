@@ -26,8 +26,15 @@ function LoginPage() {
         xhttp.send(data);
 
         xhttp.onload = function() {
-            console.log("User Logged in with token: ", this.responseText);
-            routeLobby();
+            // safegaurds for other error types
+            if (xhttp.status >= 200 && xhttp.status < 300){
+                console.log("User Logged in with token: ", this.responseText);
+                routeLobby();
+            } else {
+                console.error("Server Error: ", xhttp.status, xhttp.responseText);
+            }
+
+            
         }
         xhttp.onerror = function() {
             alert("Error: User not able to Log In")
@@ -39,8 +46,6 @@ function LoginPage() {
         navigate("/lobby", {
             state: {nickname: formData.username}
         })
-        
-
     }
 
     function routeSignUp (){
