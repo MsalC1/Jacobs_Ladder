@@ -3,12 +3,32 @@ import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [formData, setFormData] = useState({username: '', password: ''});
+    const [errors, setErrors] = useState({}); 
+    const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
 
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value })
+        // Clear error for this field when user starts typing
+        setErrors(prev => ({ ...prev, [e.target.name]: '' }));
+        setServerError('');
     }
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.username.trim()) {
+            newErrors.username = 'Username is required';
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,21 +46,24 @@ function LoginPage() {
         xhttp.send(data);
 
         xhttp.onload = function() {
-            // safegaurds for other error types
-            if (xhttp.status >= 200 && xhttp.status < 300){
+            if (xhttp.status >= 200 && xhttp.status < 300) {
                 console.log("User Logged in with token: ", this.responseText);
                 routeLobby();
             } else {
-                console.error("Server Error: ", xhttp.status, xhttp.responseText);
-            }
+                // Parse error message from backend
+                try {
+                    const response = JSON.parse(xhttp.responseText);
+                    setServerError(response.error || 'Invalid username or password');
+                } catch {
+                    setServerError('Invalid username or password');
+                }
+            }            
+        };
 
-            
-        }
         xhttp.onerror = function() {
-            alert("Error: User not able to Log In")
+            setServerError('Unable to connect with server. Please try again.')
         }
-
-    }
+    };
 
     function routeLobby(){
         navigate("/lobby", {
@@ -59,25 +82,48 @@ function LoginPage() {
             <h1>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
-                <input
-                type="text"
-                name="username"
-                placeholder="Enter username"
-                onChange={handleChange}
-                style={styles.input}
-                />
 
-                <input
-                type="text"
-                name="password"
-                placeholder="Enter password"
-                onChange={handleChange}
-                style={styles.input}
-                />
+                {/* Server error message */}
+                {serverError && (
+                    <div style={styles.serverError}>{serverError}</div>
+                )}
+
+                {/* Username field */}
+                <div style={styles.fieldContainer}>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter username"
+                        onChange={handleChange}
+                        style={{
+                            ...styles.input,
+                            border: errors.username ? '2px solid #e74c3c' : 'none'
+                        }}
+                    />
+                    {errors.username && <span style={styles.errorText}>{errors.username}</span>}
+                </div>
+
+                {/* Password field */}
+                <div style={styles.fieldContainer}>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter password"
+                        onChange={handleChange}
+                        style={{
+                            ...styles.input,
+                            border: errors.password ? '2px solid #e74c3c' : 'none'
+                        }}
+                    />
+                    {errors.password && <span style={styles.errorText}>{errors.password}</span>}
+                </div>
 
                 <button type="submit" style={styles.button}>Log In</button>
             </form>
-             <button type="submit" style={styles.signUpButton} onClick={routeSignUp}>New to Jacobs Ladder? Sign Up!</button>
+
+            <button type="button" style={styles.signUpButton} onClick={routeSignUp}>
+                New to Jacobs Ladder? Sign Up!
+            </button>
         </div>
     );
 }
@@ -98,11 +144,30 @@ const styles = {
         gap: "12px",
         marginTop: "20px"
     },
+    fieldContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px"
+    },
     input: {
         padding: "10px",
         fontSize: "16px",
         borderRadius: "6px",
         border: "none"
+    },
+    errorText: {
+        color: "#e74c3c",
+        fontSize: "13px",
+        marginTop: "2px"
+    },
+    serverError: {
+        background: "#e74c3c22",
+        border: "1px solid #e74c3c",
+        color: "#e74c3c",
+        padding: "10px",
+        borderRadius: "6px",
+        fontSize: "14px",
+        textAlign: "center"
     },
     button: {
         padding: "10px",
