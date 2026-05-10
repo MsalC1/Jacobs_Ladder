@@ -44,6 +44,7 @@ with app.app_context():
 rooms = {}  # room_id -> list of SIDs
 nicknames = {}  # sid -> display nickname (for duplicate name handling)
 original_usernames = {} # sid -> original username (for database lookups)
+player_ready_status = {} # sid -> boolean (ready or not)
 
 # Three validation functions 
 def validate_email(email):
@@ -105,20 +106,6 @@ def get_unique_nickname(room_id, requested_name):
         
     return f"{base_name} {counter}"
 
-#@app.route('/register', methods=['POST'])
-#def register():
-#    data = request.get_json()
-#    if Player.query.filter_by(username=data['username']).first():
-#        return jsonify({'error': 'Username already exists'}), 400
-    
-#    new_player = Player(username=data['username'], email=data['email'])
-#    new_player.set_password(data['password'])
-    
-#    db.session.add(new_player)
-#    db.session.commit()
-#    return jsonify({'message': 'Player created successfully'}), 201
-
-# Entire /register route replaced
 @app.route('/register', methods=['POST'])
 def register():
     """Register a new user with hashed password"""
@@ -181,18 +168,6 @@ def register():
         print(f"Registration error: {str(e)}")
         return jsonify({'error': 'Registration failed. Please try again.'}), 500
 
-#@app.route('/login', methods=['POST'])
-#def login():
-#    data = request.get_json()
-#    player = Player.query.filter_by(username=data['username']).first()
-    
-#    if player and player.check_password(data['password']):
-#        token = create_token(player.id, player.username)
-#        return jsonify({'token': token})
-    
-#    return jsonify({'error': 'Invalid credentials'}), 401
-
-# Entire /login route replaced
 @app.route('/login', methods=['POST'])
 def login():
     """Login user with username/password"""
@@ -273,7 +248,22 @@ def handle_disconnect():
                 del nicknames[request.sid]
             if request.sid in original_usernames:
                 del original_usernames[request.sid]
+            if request.sid in player_ready_status:
+                del player_ready_status[request.sid]
             emit('peer_left', { 'sid': request.sid }, room=room_id)
+            emit('player_list_update', get_players_in_room(room_id), room=room_id)
+
+def get_players_in_room(room_id):
+    """Function that gets all players in a room with their ready status"""
+    players = []
+    for sid in rooms.get(room_id, []):
+        if sid in nicknames:
+            players.append({
+                'sid': sid,
+                'nickname': nicknames[sid],
+                'ready': player_ready_status.get(sid, False)
+            })
+    return players
 
 # route for player joining a room
 @socketio.on('join_room')
@@ -287,13 +277,10 @@ def handle_join(data):
     if room_id not in rooms:
         rooms[room_id] = []
 
-    # Generates a unique nickname for this player
     unique_nickname = get_unique_nickname(room_id, player_username)
-
-    # Stores the nickname associated with this SID
     nicknames[request.sid] = unique_nickname
-
     original_usernames[request.sid] = player_username
+    player_ready_status[request.sid] = False # Not ready by default
 
     if request.sid not in rooms[room_id]:
         rooms[room_id].append(request.sid)
@@ -301,28 +288,54 @@ def handle_join(data):
     # Modified to updated print to show both original and nickname
     print(f"User {player_username} (as {unique_nickname}) has joined room {room_id}!")
 
-    # Creates a list of players with their display names
-    players_in_room = []
-    for sid in rooms[room_id]:
-        if sid in nicknames:
-            players_in_room.append({
-                'sid': sid,
-                'nickname': nicknames[sid]
-            })
-
-    #notify other peer (MODIFIED: send nickname data instead of just SIDs)
+    # Send current players list to the new player
+    players_in_room = get_players_in_room(room_id)
     emit('peers', players_in_room, to=request.sid)
-    # Changed 'new_peers' to 'new_peer' for consistency (MODIFIED: send nickname data)
+
+    # Notify others about new peer
     emit('new_peer', {
         'sid': request.sid,
         'nickname': unique_nickname
+        'ready': False
     }, room=room_id, include_self=False)
     
-    # MODIFIED: Send the joining player their assigned nickname
+    # Send updated player list to everyone
+    emit('player_list_update', players_in_room, room=room_id)
+
+    # Send the joining player their assigned nickname
     emit('nickname_assigned', {
         'nickname': unique_nickname,
         'original_name': player_username
     }, to=request.sid)
+
+@socketio.on('player_ready')
+def handle_player_ready(data):
+    """Handle a player toggling their ready status"""
+    room_id = data['room']
+    is_ready = data.get('ready', True)
+    
+    player_ready_status[request.sid] = is_ready
+    
+    # Notify everyone in the room about the ready status change
+    emit('player_ready_update', {
+        'sid': request.sid,
+        'nickname': nicknames.get(request.sid, 'Unknown'),
+        'ready': is_ready
+    }, room=room_id)
+    
+    # Send updated player list
+    emit('player_list_update', get_players_in_room(room_id), room=room_id)
+    
+    # Check if all players are ready to start the game
+    all_ready = all(player_ready_status.get(sid, False) for sid in rooms.get(room_id, []))
+    if all_ready and len(rooms.get(room_id, [])) >= 2:
+        emit('all_players_ready', {'can_start': True}, room=room_id)
+
+@socketio.on('get_players')
+def handle_get_players(data):
+    """Send the current list of players in the room"""
+    room_id = data['room']
+    emit('player_list_update', get_players_in_room(room_id), to=request.sid)
 
 # route for all players ready
 @socketio.on('ready')
@@ -356,15 +369,19 @@ def handle_leave(data):
         # MODIFIED: Clean up nickname entries on leave
         if request.sid in nicknames:
             del nicknames[request.sid]
-        if request.set in original_usernames:
+        if request.sid in original_usernames:
             del original_usernames[request.sid]
+        if request.sid in player_ready_status:
+            del player_ready_status[request.sid]
         leave_room(room_id)
         emit('peer_left', { 'sid': request.sid }, room=room_id)
+        emit('player_list_update', get_players_in_room(room_id), room=room_id)
         print(f"User {request.sid} left room {room_id}")
 
 # route for player win event
 @socketio.on('player_win')
 def handle_win(data):
+    """Handle a player winning the game"""
     print("received player win")
     
     # only the winning player should have both total_wins++ and total_games++
@@ -376,6 +393,7 @@ def handle_win(data):
     if winner:
         winner.total_wins += 1
         winner.total_games += 1
+        print(f"Updated winner {winner_username}: wins={winner.total_wins}, games={winner.total_games}")
 
     # Update for all other players in the room (only total_games)
     for sid in rooms.get(room_id, []):
@@ -383,12 +401,29 @@ def handle_win(data):
             tempPlayer = Player.query.filter_by(username=original_usernames[sid]).first()
             if tempPlayer:
                 tempPlayer.total_games += 1
+                print(f"Updated player {original_usernames[sid]}: games={tempPlayer.total_games}")
     
     db.session.commit()
 
-    # once this is done, send the game_end to all other player instances
+    # Reset ready statuses for all players in the room
+    for sid in rooms.get(room_id, []):
+        if sid in player_ready_status:
+            player_ready_status[sid] = False
+
+    # Send game_end to all players
     emit('game_end', data, room=room_id, include_self=False)
 
+    # Send updated player list 
+    emit('player_list_update', get_players_in_room(room_id), room=room_id)
+
+@socketio.on('start_game')
+def handle_start_game(data):
+    """Host/any player can request game start"""
+    room_id = data['room']
+    # Verify all players are ready 
+    all_ready = all(player_ready_status.get(sid, False) for sid in rooms.get(room_id, []))
+    if all_ready and len(rooms.get(room_id, [])) >= 2:
+        emit('game_start', {'message': 'Game starting!'}, room=room_id)
 
 if __name__ == '__main__':
     # Get port from environment variable (Render sets this automatically)
