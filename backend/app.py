@@ -253,11 +253,12 @@ def health_check():
 #       we still need additional javascript code on front end to make
 #       the webRTC connection (p2p connection)
 
+# route for connecting
 @socketio.on('connect')
 def handle_connect():
     print(f"Client connected: {request.sid}")
 
-# Another new addtion of code for the next 9 lines
+# route for disconnecting 
 @socketio.on('disconnect')
 def handle_disconnect():
     """Handle client disconnection and clean up rooms"""
@@ -271,7 +272,7 @@ def handle_disconnect():
                 del nicknames[request.sid]
             emit('peer_left', { 'sid': request.sid }, room=room_id)
 
-# Changes made to join_room to handle duplicate nicknames
+# route for player joining a room
 @socketio.on('join_room')
 def handle_join(data):
     # peer joins room to find counterpart
@@ -318,7 +319,7 @@ def handle_join(data):
         'original_name': player_username
     }, to=request.sid)
 
-# MODIFIED: Updated ready to include nickname
+# route for all players ready
 @socketio.on('ready')
 def handle_ready(data):
     room_id = data['room']
@@ -327,7 +328,7 @@ def handle_ready(data):
         'nickname': nicknames.get(request.sid, 'Unknown')
     }, room=room_id, include_self=False)
 
-# MODIFIED: Updated signal to include nickname
+# main signaling route
 @socketio.on('signal')
 def handle_signal(data):
     # relay WebRTC response/ice/offer to other peer
@@ -340,7 +341,7 @@ def handle_signal(data):
         'data': data['data']
     }, to=target)
 
-# Additions and many modifications made to the following lines of code (MODIFIED: added decorator and nickname cleanup)
+# route for players leaving a room
 @socketio.on('leave_room')
 def handle_leave(data):
     """Handle a user leaving a room"""
@@ -353,6 +354,34 @@ def handle_leave(data):
         leave_room(room_id)
         emit('peer_left', { 'sid': request.sid }, room=room_id)
         print(f"User {request.sid} left room {room_id}")
+
+# route for player win event
+@socketio.on('player_win')
+def handle_win(data):
+    print("recieved player win")
+
+    # only the winning player should have both total_wins++ and total_games++
+    room_id = data['room']
+    player_username = data.get('username', 'Guest')
+
+    winningPlayer = Player.query.filter_by(username=player_username).first()
+    if winningPlayer:
+        winningPlayer.total_wins += 1
+        winningPlayer.total_games += 1
+
+    # for all the other people in the room, only do total_games++
+    for sid in rooms.get(room_id, []):
+        if sid in nicknames:
+            p = nicknames[sid]
+            tempPlayer = Player.query.filter_by(username=p).first()
+            if tempPlayer: 
+                tempPlayer.total_games += 1
+    
+    db.session.commit()
+
+    # once this is done, send the game_end to all other player instances
+    emit('game_end', data, to=room_id, include_self=False)
+
 
 if __name__ == '__main__':
     # Get port from environment variable (Render sets this automatically)

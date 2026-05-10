@@ -195,6 +195,12 @@ export default class P2PManager {
         }
     }
 
+    // tell server to that a player has won
+    winGame() {
+        // maybe just this for now?
+        this.socket.emit("player_win", {room: this.roomID, username: this.nickname})
+    }
+
     // start the webRTC back and forth
     // ONLY USE WHEN >2 PLAYERS IN A ROOM!!!
     async startCall() {
