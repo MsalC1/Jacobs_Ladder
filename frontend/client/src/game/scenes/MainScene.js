@@ -15,6 +15,10 @@ import { createHellStageOrder } from "../levels/stageConfig";
 import LevelManager from "../systems/LevelManager";
 
 export default class MainScene extends Phaser.Scene  {
+    constructor() {
+        super("MainScene");
+    }
+
     preload(){
         // PLAYER ASSETS
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
@@ -32,11 +36,13 @@ export default class MainScene extends Phaser.Scene  {
         const jumpSFX       = new URL("../../assets/sfx/player-jump.ogg", import.meta.url).href;
         const fallSFX       = new URL("../../assets/sfx/player-falling.ogg", import.meta.url).href;
         const landSFX       = new URL("../../assets/sfx/landing-sfx-light.ogg", import.meta.url).href;
+        const hurtSFX       = new URL("../../assets/sfx/player-hurt.ogg", import.meta.url).href;
 
         this.load.audio("player-walk", walkSFX);
         this.load.audio("player-jump", jumpSFX);
         this.load.audio("player-land", landSFX);
         this.load.audio("player-fall", fallSFX);
+        this.load.audio("player-hurt", hurtSFX);
 
         // TILESET IMAGES
         const castle_image_path         = new URL("../../assets/tilesets/castles-tileset.png", import.meta.url).href;
@@ -68,6 +74,12 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     create(){
+        const WALK_VOL = 0.25;
+        const JUMP_VOL = 0.45;
+        const LAND_VOL = 0.20;
+        const FALL_VOL = 0.3;
+        const HURT_VOL = 0.2;
+
         // LEVEL BACKGROUND CREATION
         const bg = this.add.image(400, 2150, "HELL");
         bg.setDisplaySize(800, 4320);
@@ -100,25 +112,43 @@ export default class MainScene extends Phaser.Scene  {
         this.playerSounds = {
             walk: this.sound.add("player-walk", {
                 loop: true,
-                volume: 0.25,
+                volume: WALK_VOL,
             }),
 
             jump: this.sound.add("player-jump", {
-                volume: 0.45,
+                volume: JUMP_VOL,
             }),
 
             land: this.sound.add("player-land", {
-                volume: 0.20,
+                volume: LAND_VOL,
             }),
 
             fall: this.sound.add("player-fall", {
                 loop: true,
-                volume: 0.3,
+                volume: FALL_VOL,
+            }),
+            hurt: this.sound.add("player-hurt",{
+                volume: HURT_VOL,
             }),
         };
 
         this.events.on("player-jump", () => {
             this.playerSounds.jump.play();
+        });
+
+        // GET THE MUSIC TO THE GAME REGRESTRY TO COMMUNICATE WITH REACT
+        this.game.registry.set("setMusicVolume", (volume) => {
+            if (this.backgroundMusic) {
+                this.backgroundMusic.setVolume(volume);
+            }
+        });
+
+        this.game.registry.set("setSfxVolume", (volume) => {
+            this.playerSounds.walk.setVolume(volume * WALK_VOL);
+            this.playerSounds.jump.setVolume(volume * JUMP_VOL);
+            this.playerSounds.land.setVolume(volume * LAND_VOL);
+            this.playerSounds.fall.setVolume(volume * FALL_VOL);
+            this.playerSounds.hurt.setVolume(volume * HURT_VOL);
         });
 
         // BASIC PLAYER HEALTH & DISP UI
@@ -167,6 +197,14 @@ export default class MainScene extends Phaser.Scene  {
             this.handlePushMessage(message);
         }
 
+        this.networkManager.onPlayerStatus = (playerId, status) => {
+            const remotePlayer = this.remotePlayers.get(playerId);
+
+            if (!remotePlayer) return;
+
+            remotePlayer.setStatus?.(status);
+        };
+
         // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
@@ -183,6 +221,23 @@ export default class MainScene extends Phaser.Scene  {
             if (this.backgroundMusic) {
                 this.backgroundMusic.stop();
                 this.backgroundMusic.destroy();
+            }
+        });
+
+        // PAUSE LOGIC
+        this.localPaused = false;
+
+        this.game.registry.set("setLocalPaused", (paused) => {
+            this.localPaused = paused;
+
+            if (paused) {
+                this.player.sprite.setVelocity(0, 0);
+                this.playerSounds.walk?.stop();
+                this.playerSounds.fall?.stop();
+
+                this.networkManager?.sendPlayerStatus?.("paused");
+            } else {
+                this.networkManager?.sendPlayerStatus?.("active");
             }
         });
         
@@ -211,7 +266,7 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     update(time, delta) {
-        if (!this.isRespawning) {
+        if (!this.isRespawning && !this.localPaused) {
             this.playerController.update(time, delta);
             this.jumpMeter.update(time, delta);
         }
@@ -386,6 +441,10 @@ export default class MainScene extends Phaser.Scene  {
         }
 
         this.livesText.setText(`Lives: ${this.playerLives}`);
+
+        if (!this.playerSounds.hurt.isPlaying) {
+            this.playerSounds.hurt.play();
+        }
 
         if (this.playerLives <= 0) {
             this.handlePlayerDeath();

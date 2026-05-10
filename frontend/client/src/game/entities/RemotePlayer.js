@@ -57,6 +57,16 @@ export default class RemotePlayer {
         this.pushZone.setPosition(this.sprite.x, this.sprite.y);
     }
 
+    setStatus(status) {
+        this.status = status;
+
+        if (status === "paused") {
+            this.nameText.setText(`${this.nickname} (Paused)`);
+        } else {
+            this.nameText.setText(this.nickname);
+        }
+    }
+
     destroy() {
         this.sprite.destroy();
         this.nameText.destroy();

@@ -33,6 +33,10 @@ function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!validateForm()) {
+            return;
+        }
+
         // send user data to login
         const xhttp = new XMLHttpRequest();
         const method = "POST";
@@ -51,6 +55,11 @@ function LoginPage() {
 
                 const data = JSON.parse(this.responseText);
                 const genToken = data.token;
+
+                // Save login info to local storage so Lobby/Game can recover it after navigation or refresh
+                localStorage.setItem("token", genToken);
+                localStorage.setItem("nickname", formData.username);
+
                 routeLobby(genToken);
             } else {
                 // Parse error message from backend

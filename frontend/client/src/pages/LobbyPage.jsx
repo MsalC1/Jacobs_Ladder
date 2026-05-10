@@ -6,7 +6,16 @@ function LobbyPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { nickname, token } = location.state || {};
+    // const { nickname, token } = location.state || {};
+
+    const storedToken = localStorage.getItem("token");
+    const storedNickname = localStorage.getItem("nickname");
+
+    const {
+        nickname = storedNickname || "Guest",
+        token = storedToken,
+    } = location.state || {};
+
     const [roomCode, setRoomCode] = useState("");
     const [playerData, setPlayerData] = useState(null);
 
@@ -29,46 +38,54 @@ function LobbyPage() {
             state: {
                 nickname: nickname || "Guest",
                 roomCode: srvrRoom,
+                token,
             },
-            });
+        });
 
     }
 
-
     function handleJoin(e){
+        e.preventDefault();
 
         const srvrRoom = roomCode.trim().toUpperCase();
 
         if (!roomCode.trim()) return;
 
-        e.preventDefault();
-
         navigate("/game", {
-        state: {
-            nickname: nickname || "Guest",
-            roomCode: srvrRoom,
-        },
+            state: {
+                nickname: nickname || "Guest",
+                roomCode: srvrRoom,
+                token,
+            },
         });
+    }
 
+    function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("nickname");
+
+        navigate("/");
     }
 
     useEffect(() => {
+        if (!token) {
+            console.error("No token found!");
+            navigate("/");
+            return;
+        }
 
         const xhttp = new XMLHttpRequest();
         const method = "GET";
         const url = "http://localhost:5000/profile"
 
         xhttp.open(method, url, true);
-
         xhttp.setRequestHeader('Authorization', 'Bearer ' + token)
-        
         
         xhttp.onreadystatechange = function() {
 
             if (xhttp.readyState === 4){
                 if (xhttp.status === 200) {
                     const data = JSON.parse(xhttp.responseText)
-                
                     setPlayerData(data)
                 }
                 else {
@@ -80,19 +97,24 @@ function LobbyPage() {
 
         xhttp.send();
 
-    }, []);
+    }, [token, navigate]);
 
     return (
         <div style={styles.page}>
         <div style={styles.card}>
             <h1 style={{fontFamily: 'LadyRadical'}}>Lobby</h1>
-            <p style={{fontFamily: 'sans-serif'}}>Player: {nickname || "Guest"}</p>
+            <p style={styles.playerName}>Player: {nickname || "Guest"}</p>
+            <div style={styles.playerStats}>
+                {playerData
+                    ? `Games Played: ${playerData.games_played} | Games Won: ${playerData.wins}`
+                    : "Loading..."}
+            </div>
 
             <button onClick={handleCreate} style={styles.button}>
             Create Room
             </button>
 
-            <form onSubmit={handleCreate} style={styles.form}>
+            <form onSubmit={handleJoin} style={styles.form}>
             <input
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
@@ -105,7 +127,7 @@ function LobbyPage() {
             </button>
             </form>
 
-            <h1 style={{fontFamily: 'sans-serif', fontSize: '20px'}}> {playerData ? <pre>Games Played: {playerData.games_played} Games Won: {playerData.wins}</pre> : <pre>Loading...</pre>} </h1>
+            <button onClick={handleLogout} style={styles.buttonL}>Log Out</button>
         </div>
         </div>
     );
@@ -149,6 +171,26 @@ const styles = {
         background: "#4caf50",
         color: "white",
         cursor: "pointer",
+    },
+    buttonL: {
+        padding: "12px",
+        fontSize: "16px",
+        borderRadius: "8px",
+        border: "none",
+        background: "#cb202c",
+        color: "white",
+        cursor: "pointer",
+    },
+    playerName: {
+        fontFamily: "LadyRadical2",
+        fontSize: "16px",
+        margin: "0",
+    },
+    playerStats: {
+        fontFamily: "Connection",
+        fontSize: "16px",
+        margin: "0",
+        padding: "10px"
     },
 };
 

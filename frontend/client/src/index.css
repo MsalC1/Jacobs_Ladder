@@ -14,3 +14,17 @@ body,
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: "Connection";
+    src: url("../src/fonts/Connection-arMJ.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "LadyRadical2";
+    src: url("../src/fonts/LadyRadical2Regular-0yAz.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
