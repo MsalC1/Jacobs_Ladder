@@ -38,7 +38,7 @@ export default class LevelManager {
             backgroundLayer?.setDepth(-5);
             platformLayer?.setDepth(0);
             hazardVisualLayer?.setDepth(1);
-            decorLayer?.setDepth(1);
+            decorLayer?.setDepth(-10);
 
             this.platformLayers.push(platformLayer);
 
