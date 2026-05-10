@@ -358,10 +358,12 @@ def handle_leave(data):
 # route for player win event
 @socketio.on('player_win')
 def handle_win(data):
-    print("recieved player win")
 
     # only the winning player should have both total_wins++ and total_games++
-    room_id = data['room']
+    room_id = data.get('room')
+    if not room_id:
+        print("Error: no room")
+
     player_username = data.get('username', 'Guest')
 
     winningPlayer = Player.query.filter_by(username=player_username).first()
@@ -370,12 +372,16 @@ def handle_win(data):
         winningPlayer.total_games += 1
 
     # for all the other people in the room, only do total_games++
+    # kinda ahh
     for sid in rooms.get(room_id, []):
         if sid in nicknames:
             p = nicknames[sid]
-            tempPlayer = Player.query.filter_by(username=p).first()
-            if tempPlayer: 
-                tempPlayer.total_games += 1
+            if p != player_username:
+                tempPlayer = Player.query.filter_by(username=p).first()
+                if tempPlayer: 
+                    tempPlayer.total_games += 1
+
+            
     
     db.session.commit()
 
