@@ -16,7 +16,6 @@ import LevelManager from "../systems/LevelManager";
 
 export default class MainScene extends Phaser.Scene  {
     preload(){
-
         // PLAYER ASSETS
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
         const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left.png", import.meta.url).href;
@@ -26,6 +25,18 @@ export default class MainScene extends Phaser.Scene  {
 
         this.load.image("jump-bar", jumpBar);
         this.load.image("jump-bar-bg", jumpBarBg);
+
+        // PLAYER SFX
+
+        const walkSFX       = new URL("../../assets/sfx/player-walking.ogg", import.meta.url).href;
+        const jumpSFX       = new URL("../../assets/sfx/player-jump.ogg", import.meta.url).href;
+        const fallSFX       = new URL("../../assets/sfx/player-falling.ogg", import.meta.url).href;
+        const landSFX       = new URL("../../assets/sfx/landing-sfx-light.ogg", import.meta.url).href;
+
+        this.load.audio("player-walk", walkSFX);
+        this.load.audio("player-jump", jumpSFX);
+        this.load.audio("player-land", landSFX);
+        this.load.audio("player-fall", fallSFX);
 
         // TILESET IMAGES
         const castle_image_path         = new URL("../../assets/tilesets/castles-tileset.png", import.meta.url).href;
@@ -49,6 +60,11 @@ export default class MainScene extends Phaser.Scene  {
         // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 256, frameHeight: 256 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
+
+        // BACKGROUND MUSIC
+
+        const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
+        this.load.audio("game-theme", gameTheme);
     }
 
     create(){
@@ -70,11 +86,40 @@ export default class MainScene extends Phaser.Scene  {
         this.playerController   = new PlayerController(this, this.player);
         this.jumpMeter          = new JumpMeter(this, this.player);
 
+        this.wasOnGround = false;
+        this.wasFalling = false;
+
         this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);
 
         this.levelManager.addPlayerColliders(this.player.sprite);
         this.levelManager.addPlayerHazardOverlaps(this.player.sprite, this.hitHazard, this);
         this.levelManager.addPlayerGoalOverlaps(this.player.sprite, this.reachGoal, this);
+
+        // PLAYER SFX CREATION:
+
+        this.playerSounds = {
+            walk: this.sound.add("player-walk", {
+                loop: true,
+                volume: 0.25,
+            }),
+
+            jump: this.sound.add("player-jump", {
+                volume: 0.45,
+            }),
+
+            land: this.sound.add("player-land", {
+                volume: 0.20,
+            }),
+
+            fall: this.sound.add("player-fall", {
+                loop: true,
+                volume: 0.3,
+            }),
+        };
+
+        this.events.on("player-jump", () => {
+            this.playerSounds.jump.play();
+        });
 
         // BASIC PLAYER HEALTH & DISP UI
         this.playerLives = 3;
@@ -123,6 +168,22 @@ export default class MainScene extends Phaser.Scene  {
 
         // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+
+        // MUSIC CREATION
+
+        this.backgroundMusic = this.sound.add("game-theme", {
+            loop: true,
+            volume: 0.4,
+        });
+
+        this.backgroundMusic.play();
+
+        this.events.once("shutdown", () => {
+            if (this.backgroundMusic) {
+                this.backgroundMusic.stop();
+                this.backgroundMusic.destroy();
+            }
+        });
         
         // ***************** DEBUG KEYS DELETE AFTER PROD *****************/
         this.debugGraphics = this.physics.world.createDebugGraphic();
@@ -154,6 +215,8 @@ export default class MainScene extends Phaser.Scene  {
             this.jumpMeter.update(time, delta);
         }
 
+        this.updatePlayerSFX();
+
         for (const remotePlayer of this.remotePlayers.values()) {
             remotePlayer.update();
         }
@@ -179,6 +242,41 @@ export default class MainScene extends Phaser.Scene  {
         if (Phaser.Input.Keyboard.JustDown(this.interactKey)) {
             this.tryPushRemotePlayer();
         }
+    }
+
+    updatePlayerSFX() {
+        const body = this.player.sprite.body;
+
+        const isOnGround = body.blocked.down;
+        const isMovingHorizontally = Math.abs(body.velocity.x) > 20;
+        const isFalling = body.velocity.y > 250 && !isOnGround;
+
+        if (isOnGround && isMovingHorizontally && !this.isRespawning) {
+            if (!this.playerSounds.walk.isPlaying) {
+                this.playerSounds.walk.play();
+            } 
+        } else {
+            if (this.playerSounds.walk.isPlaying) {
+                this.playerSounds.walk.stop();
+            }
+        }
+
+        if (!this.wasOnGround && isOnGround) {
+            this.playerSounds.land.play();
+        }
+
+        if (isFalling && !this.isRespawning) {
+            if (!this.playerSounds.fall.isPlaying) {
+                this.playerSounds.fall.play();
+            }
+        } else {
+            if (this.playerSounds.fall.isPlaying) {
+                this.playerSounds.fall.stop();
+            }
+        }
+
+        this.wasOnGround = isOnGround;
+        this.wasFalling = isFalling;
     }
 
     createPlayerAnimations() {
@@ -295,6 +393,9 @@ export default class MainScene extends Phaser.Scene  {
 
     handlePlayerDeath() {
         if (this.isRespawning) return;
+
+        this.playerSounds.walk.stop();
+        this.playerSounds.fall.stop();
 
         this.isRespawning = true;
         this.playerInvincible = true;
