@@ -9,7 +9,7 @@ import re # Added for nickname number detection
 app = Flask(__name__)
 
 # Use the environment variable for secret key in production
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-for-production')
 
 #Testing
 app.config['SECRET_KEY'] = "change-me"
@@ -43,6 +43,7 @@ with app.app_context():
 # Store room data - SIDs list and nicknames tracking
 rooms = {}  # room_id -> list of SIDs
 nicknames = {}  # sid -> display nickname (for duplicate name handling)
+original_usernames = {} # sid -> original username (for database lookups)
 
 # Three validation functions 
 def validate_email(email):
@@ -270,6 +271,8 @@ def handle_disconnect():
             # Clean up nickname entries on disconnect
             if request.sid in nicknames:
                 del nicknames[request.sid]
+            if request.sid in original_usernames:
+                del original_usernames[request.sid]
             emit('peer_left', { 'sid': request.sid }, room=room_id)
 
 # route for player joining a room
@@ -289,6 +292,8 @@ def handle_join(data):
 
     # Stores the nickname associated with this SID
     nicknames[request.sid] = unique_nickname
+
+    original_usernames[request.sid] = player_username
 
     if request.sid not in rooms[room_id]:
         rooms[room_id].append(request.sid)
@@ -351,6 +356,8 @@ def handle_leave(data):
         # MODIFIED: Clean up nickname entries on leave
         if request.sid in nicknames:
             del nicknames[request.sid]
+        if request.set in original_usernames:
+            del original_usernames[request.sid]
         leave_room(room_id)
         emit('peer_left', { 'sid': request.sid }, room=room_id)
         print(f"User {request.sid} left room {room_id}")
@@ -358,35 +365,29 @@ def handle_leave(data):
 # route for player win event
 @socketio.on('player_win')
 def handle_win(data):
-
+    print("received player win")
+    
     # only the winning player should have both total_wins++ and total_games++
     room_id = data.get('room')
-    if not room_id:
-        print("Error: no room")
+    winner_username = data.get('username', 'Guest')
 
-    player_username = data.get('username', 'Guest')
+    # Updates winner's stats
+    winner = Player.query.filter_by(username=winner_username).first()
+    if winner:
+        winner.total_wins += 1
+        winner.total_games += 1
 
-    winningPlayer = Player.query.filter_by(username=player_username).first()
-    if winningPlayer:
-        winningPlayer.total_wins += 1
-        winningPlayer.total_games += 1
-
-    # for all the other people in the room, only do total_games++
-    # kinda ahh
+    # Update for all other players in the room (only total_games)
     for sid in rooms.get(room_id, []):
-        if sid in nicknames:
-            p = nicknames[sid]
-            if p != player_username:
-                tempPlayer = Player.query.filter_by(username=p).first()
-                if tempPlayer: 
-                    tempPlayer.total_games += 1
-
-            
+        if sid in original_usernames and original_usernames[sid] != winner_username:
+            tempPlayer = Player.query.filter_by(username=original_usernames[sid]).first()
+            if tempPlayer:
+                tempPlayer.total_games += 1
     
     db.session.commit()
 
     # once this is done, send the game_end to all other player instances
-    emit('game_end', data, to=room_id, include_self=False)
+    emit('game_end', data, room=room_id, include_self=False)
 
 
 if __name__ == '__main__':
