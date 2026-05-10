@@ -5,7 +5,7 @@ function shuffle(array) {
 }
 
 export function createHellStageOrder() {
-    const randomChunks = shuffle(hellChunks.pool).slice(0, 4);
+    const randomChunks = shuffle(hellChunks.pool).slice(0, 3);
 
     return [
         hellChunks.start,

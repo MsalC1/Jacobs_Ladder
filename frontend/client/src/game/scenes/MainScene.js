@@ -182,6 +182,8 @@ export default class MainScene extends Phaser.Scene  {
 
         // REMOTE PLAYER AND NETWORK MANAGER
         this.gameWon = false;
+        this.gameEnded = false;
+
         this.remotePlayers = new Map();
         this.networkManager = this.game.registry.get("networkManager");
 
@@ -205,11 +207,14 @@ export default class MainScene extends Phaser.Scene  {
             remotePlayer.setStatus?.(status);
         };
 
+        this.networkManager.onGameEnd = (message) => {
+            this.handleGameEnd(message);
+        };
+
         // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         // MUSIC CREATION
-
         this.backgroundMusic = this.sound.add("game-theme", {
             loop: true,
             volume: 0.4,
@@ -266,7 +271,7 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     update(time, delta) {
-        if (!this.isRespawning && !this.localPaused) {
+        if (!this.isRespawning && !this.localPaused && !this.gameEnded) {
             this.playerController.update(time, delta);
             this.jumpMeter.update(time, delta);
         }
@@ -277,7 +282,7 @@ export default class MainScene extends Phaser.Scene  {
             remotePlayer.update();
         }
 
-        if (this.networkManager && this.player) {
+        if (this.networkManager && this.player && !this.gameEnded) {
             if (!this.lastNetworkSend) this.lastNetworkSend = 0;
 
             if (time - this.lastNetworkSend > 50) {
@@ -295,12 +300,18 @@ export default class MainScene extends Phaser.Scene  {
         }
 
         // Push Mechanic
-        if (Phaser.Input.Keyboard.JustDown(this.interactKey)) {
+        if (!this.gameEnded && Phaser.Input.Keyboard.JustDown(this.interactKey)) {
             this.tryPushRemotePlayer();
         }
     }
 
     updatePlayerSFX() {
+        if (this.isRespawning || this.localPaused || this.gameEnded) {
+            this.playerSounds.walk?.stop();
+            this.playerSounds.fall?.stop();
+            return;
+        }
+
         const body = this.player.sprite.body;
 
         const isOnGround = body.blocked.down;
@@ -460,6 +471,8 @@ export default class MainScene extends Phaser.Scene  {
         this.isRespawning = true;
         this.playerInvincible = true;
 
+        this.networkManager?.sendPlayerStatus?.("respawning");
+
         this.player.sprite.setVelocity(0, 0);
         this.player.sprite.body.enable = false;
         this.player.sprite.setVisible(false);
@@ -499,6 +512,8 @@ export default class MainScene extends Phaser.Scene  {
 
         this.isRespawning = false;
 
+        this.networkManager?.sendPlayerStatus?.("active");
+
         // Spawn Protection
         this.time.delayedCall(1000, () => {
             this.playerInvincible = false;
@@ -526,18 +541,55 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        
-        if (this.gameWon === false){
-            console.log("Reached Goal!");
-
-            if (this.networkManager) {
-                this.networkManager.winGame();
-                console.log("message sent to win")
-            }
-        }
+        if (this.gameEnded) return;
 
         this.gameWon = true;
+        this.gameEnded = true;
+
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
+
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
+
+        this.add.text(400, 475, "YOU WIN!", {
+            fontSize: "56px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 8,
+            fontFamily: "Connection",
+            align: "center",
+        }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
+
+        // send a signal to p2pmanager
+        this.networkManager?.winGame?.();
+    }
+
+    handleGameEnd(message) {
+        if (this.gameEnded) return;
+
+        this.gameEnded = true;
+
+        const winner = message.winner || message.username || "Another player";
+        const myName = this.game.registry.get("nickname");
+
+        const didIWin = winner == myName;
+
+        this.gameWon = didIWin;
+
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
+
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
         
-        // try sending server player win message here?
+        this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
+            fontSize: didIWin ? "56px" : "42px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 8,
+            fontFamily: "Connection",
+            align: "center",
+        }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
     }
 }

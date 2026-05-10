@@ -25,6 +25,7 @@ export default class P2PManager {
 
        this.onPeerLeft = null;
 
+       this.onGameEnd = null;
     }
 
     async joinRoom() {
@@ -142,6 +143,11 @@ export default class P2PManager {
                 this.handleDataMessage(e.data);
             }
         };
+
+        this.socket.on("game_end", (msg) => {
+            console.log("Game ended:", msg);
+            this.onGameEnd?.(msg);
+        })
     }
 
     handleDataMessage(rawData) {
