@@ -14,6 +14,10 @@ function GamePage(){
     const [isPaused, setIsPaused] = useState(false);
     const [musicVolume, setMusicVolume] = useState(0.4);
     const [sfxVolume, setSfxVolume] = useState(0.5);
+    
+    // Adding a game over menu
+    const [gameOver, setGameOver] = useState(false);
+    const [endStats, setEndStats] = useState(null);
 
     //Test
     const location = useLocation();
@@ -34,10 +38,10 @@ function GamePage(){
         // continue working on ts
 
         // testing
-        // const socket = io("http://localhost:5000");
+        const socket = io("http://localhost:5000");
 
         // prod
-        const socket = io("https://game-backend-cagb.onrender.com/");
+        // const socket = io("https://game-backend-cagb.onrender.com/");
         const manager = new P2PManager(socket, roomCode, nickname)
 
         connectionRef.current = manager;
@@ -49,6 +53,36 @@ function GamePage(){
         });
 
         gameInstanceRef.current = game;
+
+        game.registry.set("showGameStats", async (stats) => {
+            const token = localStorage.getItem("token");
+            
+            let profile = null;
+
+            if (token) {
+                try {
+                    const res = await fetch("http://localhost:5000/profile", {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (res.ok) {
+                        profile = await res.json();
+                    }
+                } catch (err) {
+                    console.error("Could not fetch updated profile:", err);
+                }
+            }
+
+            setEndStats({
+                ...stats,
+                gamesPlayed: profile?.games_played ?? "N/A",
+                gamesWon: profile?.wins ?? "N/A",
+            });
+
+            setGameOver(true);
+        });
 
         manager.peerJoined = (gotPlayers) => {
             console.log("setting players to current players in room"); //debug
@@ -126,13 +160,13 @@ function GamePage(){
                 <div className="game-canvas-wrap">
                     <div ref={gameRef} />
 
-                    {!isPaused && (
+                    {!isPaused && !gameOver && (
                         <button className="pause-button" onClick={pauseGame} aria-label="Open settings">
                             <Pause size={16} />
                         </button>
                     )}
 
-                    {isPaused && (
+                    {isPaused && !gameOver && (
                         <div className="pause-overlay">
                             <div className="pause-card">
                                 <h1 className="pause-title">Paused</h1>
@@ -186,6 +220,57 @@ function GamePage(){
 
                                     <button className="pause-action-button danger" onClick={disconnect}>
                                         Disconnect
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {gameOver && endStats && (
+                        <div className="pause-overlay">
+                            <div className="pause-card">
+                                <h1 className="pause-title">
+                                    {endStats.didIWin ? "You Win!" : "Game Over"}
+                                </h1>
+
+                                <div className="pause-room-info">
+                                    <p>
+                                        {endStats.didIWin
+                                            ? "You reached Heaven."
+                                            : `${endStats.winnerName} won.`}
+                                    </p>
+                                </div>
+
+                                <div className="pause-control stats-row">
+                                    <span>Deaths</span>
+                                    <strong>{endStats.deathCount}</strong>
+                                </div>
+
+                                <div className="pause-control stats-row">
+                                    <span>Jumps Made</span>
+                                    <strong>{endStats.jumpsMade}</strong>
+                                </div>
+
+                                <div className="pause-control stats-row">
+                                    <span>Games Played</span>
+                                    <strong>{endStats.gamesPlayed}</strong>
+                                </div>
+
+                                <div className="pause-control stats-row">
+                                    <span>Games Won</span>
+                                    <strong>{endStats.gamesWon}</strong>
+                                </div>
+
+                                {endStats.didIWin && (
+                                    <div className="pause-control stats-row">
+                                        <span>Time Completed</span>
+                                        <strong>{endStats.timeCompleted}</strong>
+                                    </div>
+                                )}
+
+                                <div className="pause-actions">
+                                    <button className="pause-action-button" onClick={disconnect}>
+                                        Return to Lobby
                                     </button>
                                 </div>
                             </div>

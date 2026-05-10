@@ -74,6 +74,11 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     create(){
+        // PLAYER STAT COUNTERS:
+        this.deathCount = 0;
+        this.jumpsMade = 0;
+        this.gameStartTime = this.time.now
+
         const WALK_VOL = 0.25;
         const JUMP_VOL = 0.45;
         const LAND_VOL = 0.20;
@@ -133,6 +138,7 @@ export default class MainScene extends Phaser.Scene  {
         };
 
         this.events.on("player-jump", () => {
+            this.jumpsMade++;
             this.playerSounds.jump.play();
         });
 
@@ -465,6 +471,8 @@ export default class MainScene extends Phaser.Scene  {
     handlePlayerDeath() {
         if (this.isRespawning) return;
 
+        this.deathCount++;
+
         this.playerSounds.walk.stop();
         this.playerSounds.fall.stop();
 
@@ -532,7 +540,6 @@ export default class MainScene extends Phaser.Scene  {
         playerSprite.setVelocityY(hazard.knockbackY || -300); // i.e. 200 and -300 here are default values if there isn't a prop defined
 
         this.playerInvincible = true;
-        
 
         // add a time delay of 1000ms before turning off Invincibility
         this.time.delayedCall(1000, () => {
@@ -552,17 +559,12 @@ export default class MainScene extends Phaser.Scene  {
         this.playerSounds.walk?.stop();
         this.playerSounds.fall?.stop();
 
-        this.add.text(400, 475, "YOU WIN!", {
-            fontSize: "56px",
-            color: "#ffffff",
-            stroke: "#000000",
-            strokeThickness: 8,
-            fontFamily: "Connection",
-            align: "center",
-        }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
+        const myName = this.game.registry.get("nickname");
 
         // send a signal to p2pmanager
         this.networkManager?.winGame?.();
+
+        this.showEndStats(true, myName);
     }
 
     handleGameEnd(message) {
@@ -583,13 +585,35 @@ export default class MainScene extends Phaser.Scene  {
         this.playerSounds.walk?.stop();
         this.playerSounds.fall?.stop();
         
-        this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
-            fontSize: didIWin ? "56px" : "42px",
-            color: "#ffffff",
-            stroke: "#000000",
-            strokeThickness: 8,
-            fontFamily: "Connection",
-            align: "center",
-        }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
+        // this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
+        //     fontSize: didIWin ? "56px" : "42px",
+        //     color: "#ffffff",
+        //     stroke: "#000000",
+        //     strokeThickness: 8,
+        //     fontFamily: "Connection",
+        //     align: "center",
+        // }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
+
+        this.showEndStats(didIWin, winner);
+    }
+
+    showEndStats(didIWin, winnerName) {
+        const elapsedMs = this.time.now - this.gameStartTime;
+        const elapsedSeconds = Math.floor(elapsedMs / 1000);
+
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+
+        const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+        const showGameStats = this.game.registry.get("showGameStats");
+
+        showGameStats?.({
+            didIWin,
+            winnerName,
+            deathCount: this.deathCount,
+            jumpsMade: this.jumpsMade,
+            timeCompleted: didIWin ? formattedTime : null,
+        });
     }
 }

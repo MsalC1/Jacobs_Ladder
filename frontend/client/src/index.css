@@ -289,3 +289,14 @@ button:active {
         flex-direction: column;
     }
 }
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: none;
+    text-align: left;
+}
+
+.stats-row strong {
+    color: #ffffff;
+}
