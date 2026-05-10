@@ -52,32 +52,60 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     create(){
+        // LEVEL BACKGROUND CREATION
         const bg = this.add.image(400, 2150, "HELL");
-
         bg.setDisplaySize(800, 4320);
         bg.setDepth(-10);
         
         this.createPlayerAnimations();
 
-        //*******************MAY NEED TO DELETE*****************/
-
+        // LEVEL CREATION
         this.levelManager = new LevelManager(this, this.hellStageChunks);
         this.levelManager.create();
 
         const spawn = this.levelManager.spawnPoint;
 
-        // Player Creation, Camera and World Collider
+        // PLAYER CREATION
         this.player             = new Player(this, spawn.x, spawn.y);
         this.playerController   = new PlayerController(this, this.player);
         this.jumpMeter          = new JumpMeter(this, this.player);
 
-        this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);  // modify ts
+        this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);
 
         this.levelManager.addPlayerColliders(this.player.sprite);
+        this.levelManager.addPlayerHazardOverlaps(this.player.sprite, this.hitHazard, this);
+
+        // BASIC PLAYER HEALTH & DISP UI
+        this.playerLives = 3;
+        this.playerInvincible = false;
+
+        this.livesText = this.add.text(20, 20, `Lives: ${this.playerLives}`, {
+            fontSize: "24px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 4,
+        });
+
+        this.livesText.setScrollFactor(0);
+        this.livesText.setDepth(100);
+
+        // RESPAWN STATE
+        this.isRespawning = false;
+
+        this.respawnText = this.add.text(400, 475, "", {
+            fontSize: "24px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 6,
+        });
+
+        this.respawnText.setOrigin(0.5);
+        this.respawnText.setScrollFactor(0);
+        this.respawnText.setDepth(200);
+        this.respawnText.setVisible(false);
 
         // REMOTE PLAYER AND NETWORK MANAGER
         this.remotePlayers = new Map();
-
         this.networkManager = this.game.registry.get("networkManager");
 
         this.networkManager.onPeerLeft = (playerId) => {
@@ -95,7 +123,7 @@ export default class MainScene extends Phaser.Scene  {
         // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
         
-        // DEBUG KEY
+        // ***************** DEBUG KEYS DELETE AFTER PROD *****************/
         this.debugGraphics = this.physics.world.createDebugGraphic();
         this.debugGraphics.setVisible(false);
         this.physics.world.drawDebug = false;
@@ -112,11 +140,18 @@ export default class MainScene extends Phaser.Scene  {
             }
 
         });
+
+        this.input.keyboard.on("keydown-L", () => {
+            this.damagePlayer(1);
+        });
+        // ***************** DEBUG KEYS DELETE AFTER PROD *****************/
     }
 
     update(time, delta) {
-        this.playerController.update(time, delta);
-        this.jumpMeter.update(time, delta);
+        if (!this.isRespawning) {
+            this.playerController.update(time, delta);
+            this.jumpMeter.update(time, delta);
+        }
 
         for (const remotePlayer of this.remotePlayers.values()) {
             remotePlayer.update();
@@ -217,7 +252,7 @@ export default class MainScene extends Phaser.Scene  {
             const direction = this.player.sprite.x < remotePlayer.sprite.x ? 1 : -1;
 
             // debug
-            console.log("Pushing the remote player with id: ", playerId);
+            // console.log("Pushing the remote player with id: ", playerId);
 
             this.networkManager?.sendPush({
                 targetPlayerId: playerId,
@@ -235,9 +270,96 @@ export default class MainScene extends Phaser.Scene  {
 
         if (message.targetPlayerId !== myPlayerId) return;
 
-        console.log("You have been pushed!");
+        // console.log("You have been pushed!");
 
         this.player.sprite.setVelocityX(message.direction * message.forceX);
         this.player.sprite.setVelocityY(message.forceY);
+    }
+
+    damagePlayer(amount = 1) {
+        if (this.isRespawning) return;
+
+        this.playerLives -= amount;
+
+        if (this.playerLives < 0) {
+            this.playerLives = 0;
+        }
+
+        this.livesText.setText(`Lives: ${this.playerLives}`);
+
+        if (this.playerLives <= 0) {
+            this.handlePlayerDeath();
+        }
+    }
+
+    handlePlayerDeath() {
+        if (this.isRespawning) return;
+
+        this.isRespawning = true;
+        this.playerInvincible = true;
+
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
+        this.player.sprite.setVisible(false);
+
+        let countdown = 3;
+
+        this.respawnText.setText(`Respawning in ${countdown}...`);
+        this.respawnText.setVisible(true);
+
+        this.time.addEvent({
+            delay: 1000,
+            repeat: 2,
+            callback: () => {
+                countdown--;
+                if (countdown > 0) {
+                    this.respawnText.setText(`Respawning in ${countdown}...`);
+                } else {
+                    this.respawnPlayer();
+                }
+            }
+        });
+    }
+
+    respawnPlayer() {
+        const spawn = this.levelManager.spawnPoint;
+        
+        this.playerLives = 3;
+        this.livesText.setText(`Lives: ${this.playerLives}`);
+
+        this.player.sprite.setPosition(spawn.x, spawn.y);
+        this.player.sprite.setVelocity(0, 0);
+
+        this.player.sprite.body.enable = true;
+        this.player.sprite.setVisible(true);
+        
+        this.respawnText.setVisible(false);
+
+        this.isRespawning = false;
+
+        // Spawn Protection
+        this.time.delayedCall(1000, () => {
+            this.playerInvincible = false;
+        });
+    }
+
+    hitHazard(playerSprite, hazard) {
+        if (this.playerInvincible) return;
+
+        // console.log("Hit Hazard:", hazard.hazardType);
+        this.damagePlayer(hazard.damage || 1);
+
+        const direction = playerSprite.x < hazard.x ? -1 : 1;
+
+        playerSprite.setVelocityX(direction * (hazard.knockbackX || 200));
+        playerSprite.setVelocityY(hazard.knockbackY || -300); // i.e. 200 and -300 here are default values if there isn't a prop defined
+
+        this.playerInvincible = true;
+        
+
+        // add a time delay of 1000ms before turning off Invincibility
+        this.time.delayedCall(1000, () => {
+            this.playerInvincible = false;
+        });
     }
 }

@@ -4,7 +4,7 @@ export default class PlayerController {
         this.player = player;
 
         this.speed = 250;
-        this.friction = 0.95; // fricton coefficient
+        this.friction = 0.90; // fricton coefficient
 
         this.keys = scene.input.keyboard.addKeys("W,A,S,D");
     }

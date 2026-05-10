@@ -79,10 +79,143 @@
          "y":0
         }, 
         {
+         "color":"#aa0000",
          "draworder":"topdown",
          "id":5,
          "name":"Hazards",
-         "objects":[],
+         "objects":[
+                {
+                 "height":15.4239,
+                 "id":1,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":61.125,
+                 "x":97.8333333333333,
+                 "y":816.47555
+                }, 
+                {
+                 "height":15.4239,
+                 "id":2,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":28.75,
+                 "x":737.600378787879,
+                 "y":432.500171212121
+                }, 
+                {
+                 "height":15.4239,
+                 "id":3,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":28.75,
+                 "x":450.018939393939,
+                 "y":624.257746969697
+                }, 
+                {
+                 "height":15.4239,
+                 "id":5,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":61.125,
+                 "x":161.664772727273,
+                 "y":240.742595454545
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -188,7 +321,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":1,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
@@ -217,6 +350,19 @@
          "name":"castle-tileset",
          "spacing":0,
          "tilecount":56,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":64,
+         "firstgid":117,
+         "image":"..\/..\/..\/..\/Downloads\/DungeonCrawl_ProjectUtumnoTileset.png",
+         "imageheight":1536,
+         "imagewidth":2048,
+         "margin":0,
+         "name":"hazards-tileset",
+         "spacing":0,
+         "tilecount":3072,
          "tileheight":32,
          "tilewidth":32
         }],

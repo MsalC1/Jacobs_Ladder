@@ -15,10 +15,12 @@ export default class JumpMeter {
         this.barWidth = 100 * 1.5;
         this.barHeight = 40 * 1.5;
 
+        this.arrowDist = this.barWidth/1.1;
+
         this.bar = scene.add.image(0, 0, "jump-bar");
         this.barBg = scene.add.image(0, 0, "jump-bar-bg");
 
-        this.barBg.setDisplaySize(this.barWidth - 10, this.barHeight - 39);
+        this.barBg.setDisplaySize(this.barWidth - 8, this.barHeight - 39);
         this.bar.setDisplaySize(this.barWidth, this.barHeight);
 
         this.barBg.setDepth(10);
@@ -55,20 +57,20 @@ export default class JumpMeter {
         this.arrow.y = meterY;
 
         if (!this.active) {
-            this.arrow.x = meterX - this.barWidth / 2;
+            this.arrow.x = meterX - this.arrowDist / 2;
         }
     }
 
     start() {
         this.active = true;
-        this.value = -this.barWidth / 2;
+        this.value = (-this.arrowDist / 2);
         this.direction = 1;
 
         this.show();
     }
 
     moveArrow(delta) {
-        const halfRange = this.barWidth / 2;
+        const halfRange = this.arrowDist / 2;
         this.value += this.direction * this.speed * (delta / 16);
 
         if (this.value >= halfRange) {

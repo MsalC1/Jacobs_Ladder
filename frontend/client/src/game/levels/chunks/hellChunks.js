@@ -9,5 +9,17 @@ export const hellChunks = {
             key: "hell-01",
             path: new URL("../../../assets/maps/hell-chunks/hell-01.tmj", import.meta.url).href,
         },
+        {
+            key: "hell-01",
+            path: new URL("../../../assets/maps/hell-chunks/hell-01.tmj", import.meta.url).href,
+        },
+        {
+            key: "hell-01",
+            path: new URL("../../../assets/maps/hell-chunks/hell-01.tmj", import.meta.url).href,
+        },
+        {
+            key: "hell-01",
+            path: new URL("../../../assets/maps/hell-chunks/hell-01.tmj", import.meta.url).href,
+        },
     ],
 }
