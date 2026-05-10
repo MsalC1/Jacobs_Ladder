@@ -48,7 +48,10 @@ function LoginPage() {
         xhttp.onload = function() {
             if (xhttp.status >= 200 && xhttp.status < 300) {
                 console.log("User Logged in with token: ", this.responseText);
-                routeLobby();
+
+                const data = JSON.parse(this.responseText);
+                const genToken = data.token;
+                routeLobby(genToken);
             } else {
                 // Parse error message from backend
                 try {
@@ -65,9 +68,9 @@ function LoginPage() {
         }
     };
 
-    function routeLobby(){
+    function routeLobby(token){
         navigate("/lobby", {
-            state: {nickname: formData.username}
+            state: {nickname: formData.username, token: token}
         })
     }
 
@@ -79,7 +82,7 @@ function LoginPage() {
 
     return (
         <div style={styles.container}>
-            <h1>Jacobs Ladder</h1>
+            <h1 style={{fontFamily: 'LadyRadical'}}>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
 

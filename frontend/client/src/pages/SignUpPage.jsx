@@ -103,7 +103,7 @@ function SignUpPage() {
 
     return (
         <div style={styles.container}>
-            <h1>Jacobs Ladder</h1>
+            <h1 style={{fontFamily: 'LadyRadical'}}>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
 
