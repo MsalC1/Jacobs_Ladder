@@ -34,7 +34,7 @@ class Player(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     #password_hash = db.Column(db.String(200), nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
+    password_hash = db.Column(db.String(512), nullable=False) # Increased to 512 from 256
     total_wins = db.Column(db.Integer, default=0)
     total_games = db.Column(db.Integer, default=0)
     highest_level = db.Column(db.Integer, default=0)

@@ -181,6 +181,7 @@ export default class MainScene extends Phaser.Scene  {
         this.respawnText.setVisible(false);
 
         // REMOTE PLAYER AND NETWORK MANAGER
+        this.gameWon = false;
         this.remotePlayers = new Map();
         this.networkManager = this.game.registry.get("networkManager");
 
@@ -525,6 +526,18 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        console.log("Reached Goal!");
+        
+        if (this.gameWon === false){
+            console.log("Reached Goal!");
+
+            if (this.networkManager) {
+                this.networkManager.winGame();
+                console.log("message sent to win")
+            }
+        }
+
+        this.gameWon = true;
+        
+        // try sending server player win message here?
     }
 }

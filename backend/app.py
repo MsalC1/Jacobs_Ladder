@@ -9,7 +9,7 @@ import re # Added for nickname number detection
 app = Flask(__name__)
 
 # Use the environment variable for secret key in production
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-for-production')
 
 #Testing
 app.config['SECRET_KEY'] = "change-me"
@@ -43,6 +43,7 @@ with app.app_context():
 # Store room data - SIDs list and nicknames tracking
 rooms = {}  # room_id -> list of SIDs
 nicknames = {}  # sid -> display nickname (for duplicate name handling)
+original_usernames = {} # sid -> original username (for database lookups)
 
 # Three validation functions 
 def validate_email(email):
@@ -253,11 +254,12 @@ def health_check():
 #       we still need additional javascript code on front end to make
 #       the webRTC connection (p2p connection)
 
+# route for connecting
 @socketio.on('connect')
 def handle_connect():
     print(f"Client connected: {request.sid}")
 
-# Another new addtion of code for the next 9 lines
+# route for disconnecting 
 @socketio.on('disconnect')
 def handle_disconnect():
     """Handle client disconnection and clean up rooms"""
@@ -269,9 +271,11 @@ def handle_disconnect():
             # Clean up nickname entries on disconnect
             if request.sid in nicknames:
                 del nicknames[request.sid]
+            if request.sid in original_usernames:
+                del original_usernames[request.sid]
             emit('peer_left', { 'sid': request.sid }, room=room_id)
 
-# Changes made to join_room to handle duplicate nicknames
+# route for player joining a room
 @socketio.on('join_room')
 def handle_join(data):
     # peer joins room to find counterpart
@@ -288,6 +292,8 @@ def handle_join(data):
 
     # Stores the nickname associated with this SID
     nicknames[request.sid] = unique_nickname
+
+    original_usernames[request.sid] = player_username
 
     if request.sid not in rooms[room_id]:
         rooms[room_id].append(request.sid)
@@ -318,7 +324,7 @@ def handle_join(data):
         'original_name': player_username
     }, to=request.sid)
 
-# MODIFIED: Updated ready to include nickname
+# route for all players ready
 @socketio.on('ready')
 def handle_ready(data):
     room_id = data['room']
@@ -327,7 +333,7 @@ def handle_ready(data):
         'nickname': nicknames.get(request.sid, 'Unknown')
     }, room=room_id, include_self=False)
 
-# MODIFIED: Updated signal to include nickname
+# main signaling route
 @socketio.on('signal')
 def handle_signal(data):
     # relay WebRTC response/ice/offer to other peer
@@ -340,7 +346,7 @@ def handle_signal(data):
         'data': data['data']
     }, to=target)
 
-# Additions and many modifications made to the following lines of code (MODIFIED: added decorator and nickname cleanup)
+# route for players leaving a room
 @socketio.on('leave_room')
 def handle_leave(data):
     """Handle a user leaving a room"""
@@ -350,9 +356,39 @@ def handle_leave(data):
         # MODIFIED: Clean up nickname entries on leave
         if request.sid in nicknames:
             del nicknames[request.sid]
+        if request.set in original_usernames:
+            del original_usernames[request.sid]
         leave_room(room_id)
         emit('peer_left', { 'sid': request.sid }, room=room_id)
         print(f"User {request.sid} left room {room_id}")
+
+# route for player win event
+@socketio.on('player_win')
+def handle_win(data):
+    print("received player win")
+    
+    # only the winning player should have both total_wins++ and total_games++
+    room_id = data.get('room')
+    winner_username = data.get('username', 'Guest')
+
+    # Updates winner's stats
+    winner = Player.query.filter_by(username=winner_username).first()
+    if winner:
+        winner.total_wins += 1
+        winner.total_games += 1
+
+    # Update for all other players in the room (only total_games)
+    for sid in rooms.get(room_id, []):
+        if sid in original_usernames and original_usernames[sid] != winner_username:
+            tempPlayer = Player.query.filter_by(username=original_usernames[sid]).first()
+            if tempPlayer:
+                tempPlayer.total_games += 1
+    
+    db.session.commit()
+
+    # once this is done, send the game_end to all other player instances
+    emit('game_end', data, room=room_id, include_self=False)
+
 
 if __name__ == '__main__':
     # Get port from environment variable (Render sets this automatically)
