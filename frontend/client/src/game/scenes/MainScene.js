@@ -74,6 +74,7 @@ export default class MainScene extends Phaser.Scene  {
 
         this.levelManager.addPlayerColliders(this.player.sprite);
         this.levelManager.addPlayerHazardOverlaps(this.player.sprite, this.hitHazard, this);
+        this.levelManager.addPlayerGoalOverlaps(this.player.sprite, this.reachGoal, this);
 
         // BASIC PLAYER HEALTH & DISP UI
         this.playerLives = 3;
@@ -361,5 +362,9 @@ export default class MainScene extends Phaser.Scene  {
         this.time.delayedCall(1000, () => {
             this.playerInvincible = false;
         });
+    }
+
+    reachGoal(playerSprite, goal) {
+        console.log("Reached Goal!");
     }
 }

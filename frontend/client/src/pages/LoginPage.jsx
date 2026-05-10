@@ -79,6 +79,7 @@ function LoginPage() {
 
     return (
         <div style={styles.container}>
+            {/* <h1 style={styles.title}>Jacobs Ladder</h1> */}
             <h1>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
@@ -188,7 +189,10 @@ const styles = {
         cursor: "pointer",
         marginTop: "20px"
 
-    }
+    },
+    // title: {
+    //     fontSize: "60px",
+    // }
 
 };
 

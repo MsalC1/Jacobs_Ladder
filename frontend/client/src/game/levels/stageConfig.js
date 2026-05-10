@@ -10,5 +10,6 @@ export function createHellStageOrder() {
     return [
         hellChunks.start,
         ...randomChunks,
+        hellChunks.end,
     ];
 }

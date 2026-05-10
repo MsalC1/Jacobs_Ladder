@@ -11,10 +11,13 @@ export default class LevelManager {
 
         this.platformLayers = [];
         this.hazards = null;
+
+        this.goals = null;
     }
 
     create() {
         this.hazards = this.scene.physics.add.staticGroup();
+        this.goals = this.scene.physics.add.staticGroup();
 
         this.chunks.forEach((chunk, index) => {
             const yOffset = (this.chunks.length - 1 - index) * this.chunkHeight;
@@ -22,20 +25,20 @@ export default class LevelManager {
             const map = this.scene.make.tilemap({ key: chunk.key });
             const castleTiles   = map.addTilesetImage("castle-tileset", "castle-tiles");
             const hellTiles     = map.addTilesetImage("hell-tileset", "hell-tiles");
-            // const decorTiles    = map.addTilesetImage("hazards-tileset", "decor-tiles");
+            const decorTiles    = map.addTilesetImage("hazards-tileset", "decor-tiles");
 
-            const allTilesets = [castleTiles, hellTiles].filter(Boolean);
+            const allTilesets = [castleTiles, hellTiles, decorTiles].filter(Boolean);
 
             const backgroundLayer   = map.createLayer("Background-Layer", allTilesets, 0, yOffset);
             const platformLayer     = map.createLayer("Platform-Layer", allTilesets, 0, yOffset);
             const hazardVisualLayer = map.createLayer("Hazard-Visual-Layer", allTilesets, 0, yOffset);
-            // const decorLayer        = map.createLayer("Decorations-Layer", allTilesets, 0, yOffset);
+            const decorLayer        = map.createLayer("Decorations-Layer", allTilesets, 0, yOffset);
 
             platformLayer.setCollisionByExclusion([-1]);
             backgroundLayer?.setDepth(-5);
             platformLayer?.setDepth(0);
             hazardVisualLayer?.setDepth(1);
-            // decorLayer?.setDepth(1);
+            decorLayer?.setDepth(1);
 
             this.platformLayers.push(platformLayer);
 
@@ -43,6 +46,7 @@ export default class LevelManager {
 
             const spawnLayer = map.getObjectLayer("SpawnPoints");
             const hazardsLayer = map.getObjectLayer("Hazards");
+            const goalLayer = map.getObjectLayer("Goal");
 
             if (spawnLayer) {
                 const spawnObject = spawnLayer.objects.find((obj) => {
@@ -86,6 +90,28 @@ export default class LevelManager {
                     }
                 });
             }
+
+            if (goalLayer) {
+                const goalObject = goalLayer.objects.find((obj) => {
+                    return obj.name === "goal";
+                });
+
+                if (goalObject) {
+                    const goal = this.scene.add.zone(
+                        goalObject.x + goalObject.width / 2,
+                        goalObject.y + goalObject.height / 2 + yOffset,
+                        goalObject.width,
+                        goalObject.height,
+                    );
+
+                    this.scene.physics.add.existing(goal, true);
+
+                    goal.body.setSize(goalObject.width, goalObject.height);
+                    goal.body.setOffset(0, 0);
+
+                    this.goals.add(goal);
+                }
+            }
         });
 
         this.scene.physics.world.setBounds(0, 0, this.levelWidth, this.levelHeight);
@@ -113,6 +139,18 @@ export default class LevelManager {
             callback,
             null,
             context,
+        );
+    }
+
+    addPlayerGoalOverlaps(playerSprite, callback, context) {
+        if (!this.goals) return;
+
+        this.scene.physics.add.overlap(
+            playerSprite,
+            this.goals,
+            callback,
+            null,
+            context
         );
     }
 }
