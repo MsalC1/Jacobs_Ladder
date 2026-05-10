@@ -25,14 +25,7 @@ function LobbyPage() {
 
         const fallbackRoomCode = Math.random().toString(36).slice(2, 7).toUpperCase(); // just in case the player presses new room without adding room code
         
-        let srvrRoom
-
-        if (roomCode === "Enter room code"){
-            srvrRoom = fallbackRoomCode;
-        }
-        else {
-            srvrRoom = roomCode.trim().toUpperCase();
-        }
+        const srvrRoom = roomCode.trim() ? roomCode.trim().toUpperCase() : fallbackRoomCode;
 
         navigate("/game", {
             state: {
