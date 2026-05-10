@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 
@@ -6,8 +6,9 @@ function LobbyPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { nickname } = location.state || {};
+    const { nickname, token } = location.state || {};
     const [roomCode, setRoomCode] = useState("");
+    const [playerData, setPlayerData] = useState(null);
 
 
     function handleCreate() {
@@ -51,11 +52,41 @@ function LobbyPage() {
 
     }
 
+    useEffect(() => {
+
+        const xhttp = new XMLHttpRequest();
+        const method = "GET";
+        const url = "http://localhost:5000/profile"
+
+        xhttp.open(method, url, true);
+
+        xhttp.setRequestHeader('Authorization', 'Bearer ' + token)
+        
+        
+        xhttp.onreadystatechange = function() {
+
+            if (xhttp.readyState === 4){
+                if (xhttp.status === 200) {
+                    const data = JSON.parse(xhttp.responseText)
+                
+                    setPlayerData(data)
+                }
+                else {
+                    console.error("Data not fetched!")
+                }
+            }
+            
+        }
+
+        xhttp.send();
+
+    }, []);
+
     return (
         <div style={styles.page}>
         <div style={styles.card}>
-            <h1>Lobby</h1>
-            <p>Player: {nickname || "Guest"}</p>
+            <h1 style={{fontFamily: 'LadyRadical'}}>Lobby</h1>
+            <p style={{fontFamily: 'sans-serif'}}>Player: {nickname || "Guest"}</p>
 
             <button onClick={handleCreate} style={styles.button}>
             Create Room
@@ -73,6 +104,8 @@ function LobbyPage() {
                 Join Room
             </button>
             </form>
+
+            <h1 style={{fontFamily: 'sans-serif', fontSize: '20px'}}> {playerData ? <pre>Games Played: {playerData.games_played} Games Won: {playerData.wins}</pre> : <pre>Loading...</pre>} </h1>
         </div>
         </div>
     );

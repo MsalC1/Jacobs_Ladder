@@ -7,3 +7,10 @@ body,
     padding: 0;
     overflow: hidden;
 }
+
+@font-face {
+    font-family: 'LadyRadical';
+    src: url('../src/fonts/LadyRadicalRegular-VBYz.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
