@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { createGame } from "../game/mainGame";
+import { Pause } from "lucide-react";
 import P2PManager from "../game/systems/P2PManager";
 
 function GamePage(){
@@ -120,74 +121,79 @@ function GamePage(){
     }
 
     return (
-        <div className="game-and-info-container" style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>
-            <div style={{ position: "relative" }}>
-                <div ref={ gameRef } />
-                <button 
-                    onClick={pauseGame} 
-                    style={{
-                        position: "absolute",
-                        top: "20px",
-                        right: "20px",
-                        zIndex: 10,
-                        }}
-                >Pause</button>
+        <main className="game-page">
+            <section className="game-shell">
+                <div className="game-canvas-wrap">
+                    <div ref={gameRef} />
 
-                {isPaused && (
-                    <div
-                        style={{
-                            position: "absolute",
-                            inset: 0,
-                            background: "rgba(0, 0, 0, 0.75)",
-                            color: "white",
-                            zIndex: 20,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: "16px",
-                        }}
-                    >
-                        <h1>PAUSED</h1>
+                    {!isPaused && (
+                        <button className="pause-button" onClick={pauseGame} aria-label="Open settings">
+                            <Pause size={16} />
+                        </button>
+                    )}
 
-                        <div
-                            className="game-header"
-                            style={{ textAlign: "center", padding: "0px" }}
-                        >
-                            <p>Room: {roomCode}</p>
-                            <p>Players: {players.map((p) => p.nickname).join(", ")}</p>
+                    {isPaused && (
+                        <div className="pause-overlay">
+                            <div className="pause-card">
+                                <h1 className="pause-title">Paused</h1>
+
+                                <div className="pause-room-info">
+                                    <p>Room: {roomCode}</p>
+                                    <p>
+                                        Players:{" "}
+                                        {players.length > 0
+                                            ? players.map((p) => p.nickname).join(", ")
+                                            : "Waiting..."}
+                                    </p>
+                                </div>
+
+                                <div className="pause-control">
+                                    <label htmlFor="music-volume">Music Volume</label>
+                                    <input
+                                        id="music-volume"
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={musicVolume}
+                                        onChange={(e) =>
+                                            changeMusicVolume(Number(e.target.value))
+                                        }
+                                    />
+                                    <span>{Math.round(musicVolume * 100)}%</span>
+                                </div>
+
+                                <div className="pause-control">
+                                    <label htmlFor="sfx-volume">SFX Volume</label>
+                                    <input
+                                        id="sfx-volume"
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={sfxVolume}
+                                        onChange={(e) =>
+                                            changeSfxVolume(Number(e.target.value))
+                                        }
+                                    />
+                                    <span>{Math.round(sfxVolume * 100)}%</span>
+                                </div>
+
+                                <div className="pause-actions">
+                                    <button className="pause-action-button" onClick={resumeGame}>
+                                        Resume
+                                    </button>
+
+                                    <button className="pause-action-button danger" onClick={disconnect}>
+                                        Disconnect
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-
-                        <label>
-                            Music Volume
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={musicVolume}
-                                onChange={(e) => changeMusicVolume(Number(e.target.value))}
-                            />
-                        </label>
-
-                        <label>
-                            SFX Volume
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={sfxVolume}
-                                onChange={(e) => changeSfxVolume(Number(e.target.value))}
-                            />
-                        </label>
-
-                        <button onClick={resumeGame}>Resume</button>
-                        <button onClick={disconnect}>Disconnect</button>
-                    </div>
-                )}
-            </div>
-        </div>
+                    )}
+                </div>
+            </section>
+        </main>
     );
 }
 

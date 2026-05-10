@@ -120,3 +120,172 @@ button:active {
     position: relative;
     z-index: 1;
 }
+
+/* GAME PAGE CSS */
+
+.game-page {
+    min-height: 100vh;
+    background: #1a1a1a;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.game-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-canvas-wrap {
+    position: relative;
+}
+
+.pause-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+
+    padding: 12px 15px;
+    border: none;
+    border-radius: 15px;
+
+
+    background: rgba(42, 42, 42, 0.9);
+    color: white;
+    /* font-family: "Connection", sans-serif; */
+    /* font-size: 16px; */
+    cursor: pointer;
+
+    backdrop-filter: blur(4px);
+}
+
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+.pause-card {
+    width: min(420px, 85%);
+    padding: 32px;
+
+    border-radius: 16px;
+    background: rgba(42, 42, 42, 0.95);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.pause-title {
+    margin: 0;
+    font-family: "LadyRadical", "Connection", sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+}
+
+.pause-room-info {
+    font-family: "Connection", sans-serif;
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.pause-room-info p {
+    margin: 4px 0;
+}
+
+.pause-control {
+    display: grid;
+    grid-template-columns: 1fr 160px 48px;
+    align-items: center;
+    gap: 12px;
+
+    font-family: "Connection", sans-serif;
+    font-size: 15px;
+    text-align: left;
+}
+
+.pause-control input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.pause-control span {
+    text-align: right;
+}
+
+.pause-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.pause-action-button {
+    flex: 1;
+
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+
+    background: #4caf50;
+    color: white;
+    font-family: "Connection", sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.pause-action-button.danger {
+    background: #cb202c;
+}
+
+.pause-button,
+.pause-action-button {
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pause-button:hover,
+.pause-action-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.pause-button:active,
+.pause-action-button:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+@media (max-width: 520px) {
+    .pause-card {
+        padding: 24px;
+    }
+
+    .pause-control {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .pause-control span {
+        text-align: center;
+    }
+
+    .pause-actions {
+        flex-direction: column;
+    }
+}
