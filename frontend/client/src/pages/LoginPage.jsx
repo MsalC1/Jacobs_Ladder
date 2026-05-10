@@ -90,7 +90,8 @@ function LoginPage() {
     }
 
     return (
-        <div style={styles.container}>
+        <div style={styles.page}>
+        <div style={styles.card}>
             <h1 style={{fontFamily: 'LadyRadical'}}>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
@@ -137,6 +138,7 @@ function LoginPage() {
                 New to Jacobs Ladder? Sign Up!
             </button>
         </div>
+        </div>
     );
 }
 
@@ -149,6 +151,24 @@ const styles = {
         alignItems: "center",
         background: "#1a1a1a",
         color: "#fff"
+    },
+    page: {
+        minHeight: "100vh",
+        background: "#1a1a1a",
+        color: "white",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    card: {
+        width: "320px",
+        padding: "32px",
+        borderRadius: "12px",
+        background: "#2a2a2a",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        textAlign: "center",
     },
     form: {
         display: "flex",
