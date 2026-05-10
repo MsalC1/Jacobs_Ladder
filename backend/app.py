@@ -295,7 +295,7 @@ def handle_join(data):
     # Notify others about new peer
     emit('new_peer', {
         'sid': request.sid,
-        'nickname': unique_nickname
+        'nickname': unique_nickname,
         'ready': False
     }, room=room_id, include_self=False)
     
