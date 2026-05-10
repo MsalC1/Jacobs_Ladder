@@ -114,6 +114,8 @@ export default class JumpMeter {
 
         this.player.setVelocityY(jumpPower);
 
+        this.scene.events.emit("player-jump");
+
         this.active = false;
         this.hide();
     }
