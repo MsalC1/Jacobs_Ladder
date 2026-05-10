@@ -13,6 +13,8 @@ export default class P2PManager {
        
        this.onPlayerState = null;
 
+       this.onPlayerStatus = null;
+
        this.onPush = null;
 
        this.targetSID = null;
@@ -155,6 +157,10 @@ export default class P2PManager {
         if (message.type === "push") {
             this.onPush?.(message);
         }
+
+        if (message.type === "player-status") {
+            this.onPlayerStatus?.(message.playerId, message.status);
+        }
     }
 
     sendPlayerState(state) {
@@ -193,6 +199,20 @@ export default class P2PManager {
         if (this.peerConnection) {
             this.peerConnection.close();
         }
+
+        this.socket.disconnect();
+    }
+
+    sendPlayerStatus(status) {
+        if (!this.dataChannel) return;
+        if (this.dataChannel.readyState !== "open") return;
+
+        this.dataChannel.send(JSON.stringify({
+            type: "player-status",
+            playerId: this.socket.id,
+            nickname: this.nickname,
+            status,
+        }));
     }
 
     // start the webRTC back and forth
