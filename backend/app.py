@@ -296,7 +296,7 @@ def handle_join(data):
     emit('new_peer', {
         'sid': request.sid,
         'nickname': unique_nickname,
-        'ready': False
+        'ready': False,
     }, room=room_id, include_self=False)
     
     # Send updated player list to everyone
