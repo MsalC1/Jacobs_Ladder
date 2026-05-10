@@ -28,3 +28,95 @@ body,
     font-weight: normal;
     font-style: normal;
 }
+
+button {
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+button:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* DYNAMIC BACKGROUND */
+
+.dynamic-bg {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+
+.dynamic-bg__marquee {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dynamic-bg__marquee--top {
+    top: 18%;
+    transform: rotate(-8deg);
+}
+
+.dynamic-bg__marquee--bottom {
+    bottom: 18%;
+    transform: rotate(8deg);
+    opacity: 0.75;
+}
+
+.dynamic-bg__track {
+    display: flex;
+    width: max-content;
+    white-space: nowrap;
+    animation: marqueeLeft 80s linear infinite;
+    will-change: transform;
+}
+
+.dynamic-bg__track--reverse {
+    animation: marqueeRight 90s linear infinite;
+}
+
+.dynamic-bg__text {
+    flex-shrink: 0;
+    font-family: "Connection", sans-serif;
+    font-size: 72px;
+    letter-spacing: 8px;
+    color: rgba(255, 255, 255, 0.12);
+    text-shadow:
+        0 0 8px rgba(16, 16, 16, 0.45),
+        0 0 18px rgba(15, 15, 15, 0.25),
+        0 0 32px rgba(231, 231, 231, 0.15);
+}
+
+@keyframes marqueeLeft {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-25%, 0, 0);
+    }
+}
+
+@keyframes marqueeRight {
+    from {
+        transform: translate3d(-25%, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.menu-card {
+    position: relative;
+    z-index: 1;
+}

@@ -102,8 +102,30 @@ function SignUpPage() {
     }
 
     return (
-        <div style={styles.container}>
-            <h1 style={{fontFamily: 'LadyRadical'}}>Jacobs Ladder</h1>
+        <div className="dynamic-bg" style={styles.page}>
+            <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
+                <div className="dynamic-bg__track">
+                <span className="dynamic-bg__text">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                <span className="dynamic-bg__text" aria-hidden="true">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                </div>
+            </div>
+
+            <div className="dynamic-bg__marquee dynamic-bg__marquee--bottom">
+                <div className="dynamic-bg__track dynamic-bg__track--reverse">
+                <span className="dynamic-bg__text">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                <span className="dynamic-bg__text" aria-hidden="true">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                </div>
+            </div>
+        <div className="menu-card" style={styles.card}>
+            <h1 style={styles.title}>Jacobs Ladder</h1>
 
             <form onSubmit={handleSubmit} style={styles.form}>
 
@@ -127,21 +149,6 @@ function SignUpPage() {
                     {errors.username && <span style={styles.errorText}>{errors.username}</span>}
                 </div>
 
-                {/* Password field */}
-                <div style={styles.fieldContainer}>
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Enter password"
-                        onChange={handleChange}
-                        style={{
-                            ...styles.input,
-                            border: errors.password ? '2px solid #e74c3c' : 'none'
-                        }}
-                    />
-                    {errors.password && <span style={styles.errorText}>{errors.password}</span>}
-                </div>
-
                 {/* Email field */}
                 <div style={styles.fieldContainer}>
                     <input
@@ -157,44 +164,75 @@ function SignUpPage() {
                     {errors.email && <span style={styles.errorText}>{errors.email}</span>}
                 </div>
 
+                {/* Password field */}
+                <div style={styles.fieldContainer}>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter password"
+                        onChange={handleChange}
+                        style={{
+                            ...styles.input,
+                            border: errors.password ? '2px solid #e74c3c' : 'none'
+                        }}
+                    />
+                    {errors.password && <span style={styles.errorText}>{errors.password}</span>}
+                </div>
+
                 <button type="submit" style={styles.button}>Sign Up</button>
             </form>
+        </div>
         </div>
     );
 }
 
 const styles = {
-    container: {
-        height: "100vh",
+    page: {
+        minHeight: "100vh",
+        // background: "#1a1a1a",
+        color: "white",
         display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        background: "#1a1a1a",
-        color: "#fff"
+    },
+    card: {
+        width: "320px",
+        padding: "32px",
+        borderRadius: "12px",
+        background: "#2a2a2a",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        textAlign: "center",
+        alignItems: "stretch",
     },
     form: {
         display: "flex",
         flexDirection: "column",
         gap: "12px",
         marginTop: "20px",
-        width: "300px"
+        width: "100%",
     },
     fieldContainer: {
         display: "flex",
         flexDirection: "column",
-        gap: "4px"
+        gap: "4px",
+        width: "100%",
+        textAlign: "left",
     },
     input: {
+        width: "100%",
+        boxSizing: "border-box",
         padding: "10px",
         fontSize: "16px",
         borderRadius: "6px",
-        border: "none"
+        border: "none",
     },
     errorText: {
         color: "#e74c3c",
         fontSize: "13px",
-        marginTop: "2px"
+        marginTop: "2px",
+        textAlign: "left",
     },
     serverError: {
         background: "#e74c3c22",
@@ -203,9 +241,13 @@ const styles = {
         padding: "10px",
         borderRadius: "6px",
         fontSize: "14px",
-        textAlign: "center"
+        textAlign: "center",
+        width: "100%",
+        boxSizing: "border-box",
     },
     button: {
+        width: "100%",
+        boxSizing: "border-box",
         padding: "10px",
         fontSize: "16px",
         borderRadius: "6px",
@@ -213,8 +255,12 @@ const styles = {
         background: "#4CAF50",
         color: "white",
         cursor: "pointer",
-    }
-
+        marginTop: "20px",
+    },
+    title: {
+        fontFamily: "LadyRadical",
+        letterSpacing: "1px",
+    },
 };
 
 export default SignUpPage;
