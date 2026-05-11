@@ -61,8 +61,22 @@ export default class RemotePlayer {
         this.status = status;
 
         if (status === "paused") {
+            this.sprite.setVisible(true);
+            this.nameText.setVisible(true);
+            this.pushZone.body.enable = true;
+
             this.nameText.setText(`${this.nickname} (Paused)`);
+        } else if (status === "respawning" || status === "dead") {
+            this.sprite.setVisible(false);
+            this.nameText.setVisible(true);
+            this.pushZone.body.enable = false;
+
+            this.nameText.setText(`${this.nickname} (Respawning)`);
         } else {
+            this.sprite.setVisible(true);
+            this.nameText.setVisible(true);
+            this.pushZone.body.enable = true;
+
             this.nameText.setText(this.nickname);
         }
     }

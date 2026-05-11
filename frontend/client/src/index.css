@@ -289,3 +289,90 @@ button:active {
         flex-direction: column;
     }
 }
+
+
+/* ON GAME BEATEN/WON/OVER */
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: none;
+    text-align: left;
+}
+
+.stats-row strong {
+    color: #ffffff;
+}
+
+
+/* // ROOM PAGE  */
+.room-page {
+    min-height: 100vh;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-card {
+    width: 380px;
+    padding: 32px;
+    border-radius: 12px;
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.room-title {
+    margin: 0;
+    font-family: "LadyRadical", sans-serif;
+    letter-spacing: 2px;
+}
+
+.room-code,
+.room-count {
+    margin: 0;
+    font-family: "Connection", sans-serif;
+    font-size: 18px;
+}
+
+.room-player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.room-player-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    font-family: "Connection", sans-serif;
+}
+
+.room-countdown {
+    margin: 0;
+    font-family: "LadyRadical", sans-serif;
+    font-size: 48px;
+    letter-spacing: 4px;
+}
+
+.menu-button {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4caf50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.menu-button.danger {
+    background: #cb202c;
+}

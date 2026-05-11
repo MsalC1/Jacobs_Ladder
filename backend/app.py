@@ -411,7 +411,11 @@ def handle_win(data):
             player_ready_status[sid] = False
 
     # Send game_end to all players
-    emit('game_end', data, room=room_id, include_self=False)
+    emit('game_end', {
+        'winner': winner_username,
+        'winner_sid': request.sid,
+        'room': room_id,
+    }, room=room_id, include_self=False)
 
     # Send updated player list 
     emit('player_list_update', get_players_in_room(room_id), room=room_id)
