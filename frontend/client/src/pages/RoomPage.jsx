@@ -26,8 +26,8 @@ function RoomPage() {
             return;
         }
 
-        // const socket = io("https://game-backend-cagb.onrender.com/");
-        const socket = io("http://localhost:5000"); // testing
+        const socket = io("https://game-backend-cagb.onrender.com/");
+        // const socket = io("http://localhost:5000"); // testing
         socketRef.current = socket;
 
         socket.emit("join_room", {

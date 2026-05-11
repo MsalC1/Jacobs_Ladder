@@ -38,10 +38,10 @@ function GamePage(){
         // continue working on ts
 
         // testing
-        const socket = io("http://localhost:5000");
+        // const socket = io("http://localhost:5000");
 
         // prod
-        // const socket = io("https://game-backend-cagb.onrender.com/");
+        const socket = io("https://game-backend-cagb.onrender.com/");
         const manager = new P2PManager(socket, roomCode, nickname)
 
         connectionRef.current = manager;
@@ -61,7 +61,7 @@ function GamePage(){
 
             if (token) {
                 try {
-                    const res = await fetch("http://localhost:5000/profile", {
+                    const res = await fetch("https://game-backend-cagb.onrender.com/profile", {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

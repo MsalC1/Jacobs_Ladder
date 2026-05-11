@@ -69,7 +69,9 @@ function LobbyPage() {
 
         const xhttp = new XMLHttpRequest();
         const method = "GET";
-        const url = "http://localhost:5000/profile"
+        // const url = "http://localhost:5000/profile"
+        const url = "https://game-backend-cagb.onrender.com/profile"
+        
 
         xhttp.open(method, url, true);
         xhttp.setRequestHeader('Authorization', 'Bearer ' + token)

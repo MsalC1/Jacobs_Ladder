@@ -57,7 +57,7 @@ function SignUpPage() {
         const xhttp = new XMLHttpRequest();
         const data = JSON.stringify(formData);
         const method = "POST";
-        const url = "http://localhost:5000/register" // change this to actual backend ref
+        const url = "https://game-backend-cagb.onrender.com/register" // change this to actual backend ref
 
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")

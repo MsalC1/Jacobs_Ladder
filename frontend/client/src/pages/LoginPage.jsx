@@ -41,7 +41,8 @@ function LoginPage() {
         const xhttp = new XMLHttpRequest();
         const method = "POST";
         const data = JSON.stringify(formData)
-        const url = "http://localhost:5000/login" // change this to actual backend ref
+        // const url = "http://localhost:5000/login"
+        const url = "https://game-backend-cagb.onrender.com/login"
 
 
         xhttp.open(method, url, true);
