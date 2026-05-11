@@ -51,7 +51,7 @@ function LoginPage() {
 
         xhttp.onload = function() {
             if (xhttp.status >= 200 && xhttp.status < 300) {
-                console.log("User Logged in with token: ", this.responseText);
+                // console.log("User Logged in with token: ", this.responseText);
 
                 const data = JSON.parse(this.responseText);
                 const genToken = data.token;

@@ -23,7 +23,7 @@ export function createGame(parent, gameData) {
             },
         },
         callbacks: {
-            postBoot: (game) => {
+            preBoot: (game) => {
                 game.registry.set("networkManager", gameData.networkManager);
                 game.registry.set("nickname", gameData.nickname);
                 game.registry.set("roomCode", gameData.roomCode);

@@ -99,17 +99,17 @@ export default class JumpMeter {
 
             if (!this.player.isOnGround()){
                 jumpPower = -900;
-                console.log("Perfect Secret jump!");
+                // console.log("Perfect Secret jump!");
             } else {
                 jumpPower = JUMP_PERFECT;
-                console.log("Perfect jump!");
+                // console.log("Perfect jump!");
             }
         } else if (distanceFromCenter <= 30) {
             jumpPower = JUMP_ENHANCED;
-            console.log("Enhanced jump!");
+            // console.log("Enhanced jump!");
         } else {
             jumpPower = JUMP_NORMAL;
-            console.log("Normal jump!");
+            // console.log("Normal jump!");
         }
 
         this.player.setVelocityY(jumpPower);

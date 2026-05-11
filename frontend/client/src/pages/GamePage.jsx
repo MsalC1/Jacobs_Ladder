@@ -85,8 +85,8 @@ function GamePage(){
         });
 
         manager.peerJoined = (gotPlayers) => {
-            console.log("setting players to current players in room"); //debug
-            console.log(gotPlayers);
+            // console.log("setting players to current players in room"); //debug
+            // console.log(gotPlayers);
             setPlayers(gotPlayers);
         };
 

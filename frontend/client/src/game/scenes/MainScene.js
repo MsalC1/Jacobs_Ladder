@@ -58,6 +58,9 @@ export default class MainScene extends Phaser.Scene  {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
         }
 
+        // console.log("Room seed:", roomCode);
+        // console.log("Chunk order:", this.hellStageChunks.map((chunk) => chunk.key));
+
         this.load.image("castle-tiles", castle_image_path);
         this.load.image("decor-tiles", dungeon_crawl_image_path);
         this.load.image("hell-tiles", hell_image_path);
