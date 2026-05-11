@@ -25,16 +25,9 @@ function LobbyPage() {
 
         const fallbackRoomCode = Math.random().toString(36).slice(2, 7).toUpperCase(); // just in case the player presses new room without adding room code
         
-        let srvrRoom
+        const srvrRoom = roomCode.trim() ? roomCode.trim().toUpperCase() : fallbackRoomCode;
 
-        if (roomCode === "Enter room code"){
-            srvrRoom = fallbackRoomCode;
-        }
-        else {
-            srvrRoom = roomCode.trim().toUpperCase();
-        }
-
-        navigate("/game", {
+        navigate("/room", {
             state: {
                 nickname: nickname || "Guest",
                 roomCode: srvrRoom,
@@ -51,7 +44,7 @@ function LobbyPage() {
 
         if (!roomCode.trim()) return;
 
-        navigate("/game", {
+        navigate("/room", {
             state: {
                 nickname: nickname || "Guest",
                 roomCode: srvrRoom,
@@ -100,8 +93,29 @@ function LobbyPage() {
     }, [token, navigate]);
 
     return (
-        <div style={styles.page}>
-        <div style={styles.card}>
+        <div className="dynamic-bg" style={styles.page}>
+            {/* <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
+                <div className="dynamic-bg__track">
+                <span className="dynamic-bg__text">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                <span className="dynamic-bg__text" aria-hidden="true">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                </div>
+            </div>
+
+            <div className="dynamic-bg__marquee dynamic-bg__marquee--bottom">
+                <div className="dynamic-bg__track dynamic-bg__track--reverse">
+                <span className="dynamic-bg__text">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                <span className="dynamic-bg__text" aria-hidden="true">
+                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
+                </span>
+                </div>
+            </div> */}
+        <div className="menu-card" style={styles.card}>
             <h1 style={{fontFamily: 'LadyRadical'}}>Lobby</h1>
             <p style={styles.playerName}>Player: {nickname || "Guest"}</p>
             <div style={styles.playerStats}>
@@ -136,7 +150,7 @@ function LobbyPage() {
 const styles = {
     page: {
         minHeight: "100vh",
-        background: "#1a1a1a",
+        // background: "#1a1a1a",
         color: "white",
         display: "flex",
         justifyContent: "center",

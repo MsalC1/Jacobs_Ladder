@@ -5,7 +5,7 @@ export function createGame(parent, gameData) {
     return new Phaser.Game({
         type: Phaser.AUTO,
         width: 800,
-        height: "100%",
+        height: 950,
         parent,
         disableVisibilityChange: true,
         scale: {

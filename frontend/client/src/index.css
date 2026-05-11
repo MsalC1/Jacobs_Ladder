@@ -28,3 +28,351 @@ body,
     font-weight: normal;
     font-style: normal;
 }
+
+button {
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+button:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* DYNAMIC BACKGROUND */
+
+.dynamic-bg {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+
+.dynamic-bg__marquee {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dynamic-bg__marquee--top {
+    top: 18%;
+    transform: rotate(-8deg);
+}
+
+.dynamic-bg__marquee--bottom {
+    bottom: 18%;
+    transform: rotate(8deg);
+    opacity: 0.75;
+}
+
+.dynamic-bg__track {
+    display: flex;
+    width: max-content;
+    white-space: nowrap;
+    animation: marqueeLeft 80s linear infinite;
+    will-change: transform;
+}
+
+.dynamic-bg__track--reverse {
+    animation: marqueeRight 90s linear infinite;
+}
+
+.dynamic-bg__text {
+    flex-shrink: 0;
+    font-family: "Connection", sans-serif;
+    font-size: 72px;
+    letter-spacing: 8px;
+    color: rgba(255, 255, 255, 0.12);
+    text-shadow:
+        0 0 8px rgba(16, 16, 16, 0.45),
+        0 0 18px rgba(15, 15, 15, 0.25),
+        0 0 32px rgba(231, 231, 231, 0.15);
+}
+
+@keyframes marqueeLeft {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-25%, 0, 0);
+    }
+}
+
+@keyframes marqueeRight {
+    from {
+        transform: translate3d(-25%, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.menu-card {
+    position: relative;
+    z-index: 1;
+}
+
+/* GAME PAGE CSS */
+
+.game-page {
+    min-height: 100vh;
+    background: #1a1a1a;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.game-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-canvas-wrap {
+    position: relative;
+}
+
+.pause-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+
+    padding: 12px 15px;
+    border: none;
+    border-radius: 15px;
+
+
+    background: rgba(42, 42, 42, 0.9);
+    color: white;
+    /* font-family: "Connection", sans-serif; */
+    /* font-size: 16px; */
+    cursor: pointer;
+
+    backdrop-filter: blur(4px);
+}
+
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+.pause-card {
+    width: min(420px, 85%);
+    padding: 32px;
+
+    border-radius: 16px;
+    background: rgba(42, 42, 42, 0.95);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.pause-title {
+    margin: 0;
+    font-family: "LadyRadical", "Connection", sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+}
+
+.pause-room-info {
+    font-family: "Connection", sans-serif;
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.pause-room-info p {
+    margin: 4px 0;
+}
+
+.pause-control {
+    display: grid;
+    grid-template-columns: 1fr 160px 48px;
+    align-items: center;
+    gap: 12px;
+
+    font-family: "Connection", sans-serif;
+    font-size: 15px;
+    text-align: left;
+}
+
+.pause-control input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.pause-control span {
+    text-align: right;
+}
+
+.pause-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.pause-action-button {
+    flex: 1;
+
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+
+    background: #4caf50;
+    color: white;
+    font-family: "Connection", sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.pause-action-button.danger {
+    background: #cb202c;
+}
+
+.pause-button,
+.pause-action-button {
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pause-button:hover,
+.pause-action-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.pause-button:active,
+.pause-action-button:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+@media (max-width: 520px) {
+    .pause-card {
+        padding: 24px;
+    }
+
+    .pause-control {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .pause-control span {
+        text-align: center;
+    }
+
+    .pause-actions {
+        flex-direction: column;
+    }
+}
+
+
+/* ON GAME BEATEN/WON/OVER */
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    grid-template-columns: none;
+    text-align: left;
+}
+
+.stats-row strong {
+    color: #ffffff;
+}
+
+
+/* // ROOM PAGE  */
+.room-page {
+    min-height: 100vh;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-card {
+    width: 380px;
+    padding: 32px;
+    border-radius: 12px;
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.room-title {
+    margin: 0;
+    font-family: "LadyRadical", sans-serif;
+    letter-spacing: 2px;
+}
+
+.room-code,
+.room-count {
+    margin: 0;
+    font-family: "Connection", sans-serif;
+    font-size: 18px;
+}
+
+.room-player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.room-player-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    font-family: "Connection", sans-serif;
+}
+
+.room-countdown {
+    margin: 0;
+    font-family: "LadyRadical", sans-serif;
+    font-size: 48px;
+    letter-spacing: 4px;
+}
+
+.menu-button {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #4caf50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.menu-button.danger {
+    background: #cb202c;
+}

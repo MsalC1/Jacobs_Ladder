@@ -31,7 +31,6 @@ export default class MainScene extends Phaser.Scene  {
         this.load.image("jump-bar-bg", jumpBarBg);
 
         // PLAYER SFX
-
         const walkSFX       = new URL("../../assets/sfx/player-walking.ogg", import.meta.url).href;
         const jumpSFX       = new URL("../../assets/sfx/player-jump.ogg", import.meta.url).href;
         const fallSFX       = new URL("../../assets/sfx/player-falling.ogg", import.meta.url).href;
@@ -49,7 +48,11 @@ export default class MainScene extends Phaser.Scene  {
         const dungeon_crawl_image_path  = new URL("../../assets/tilesets/dungeon-tileset.png", import.meta.url).href;
         const hell_image_path           = new URL("../../assets/tilesets/hell-tileset.png", import.meta.url).href;
 
-        this.hellStageChunks = createHellStageOrder();
+
+        // GAME SEED CHUNK GENERATION
+        const roomCode = this.game.registry.get("roomCode") || "DEFAULT_ROOM";
+
+        this.hellStageChunks = createHellStageOrder(roomCode);
 
         for (const chunk of this.hellStageChunks) {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
@@ -68,12 +71,16 @@ export default class MainScene extends Phaser.Scene  {
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
 
         // BACKGROUND MUSIC
-
         const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
         this.load.audio("game-theme", gameTheme);
     }
 
     create(){
+        // PLAYER STAT COUNTERS:
+        this.deathCount = 0;
+        this.jumpsMade = 0;
+        this.gameStartTime = this.time.now
+
         const WALK_VOL = 0.25;
         const JUMP_VOL = 0.45;
         const LAND_VOL = 0.20;
@@ -133,6 +140,7 @@ export default class MainScene extends Phaser.Scene  {
         };
 
         this.events.on("player-jump", () => {
+            this.jumpsMade++;
             this.playerSounds.jump.play();
         });
 
@@ -182,6 +190,8 @@ export default class MainScene extends Phaser.Scene  {
 
         // REMOTE PLAYER AND NETWORK MANAGER
         this.gameWon = false;
+        this.gameEnded = false;
+
         this.remotePlayers = new Map();
         this.networkManager = this.game.registry.get("networkManager");
 
@@ -205,11 +215,14 @@ export default class MainScene extends Phaser.Scene  {
             remotePlayer.setStatus?.(status);
         };
 
+        this.networkManager.onGameEnd = (message) => {
+            this.handleGameEnd(message);
+        };
+
         // PUSH PLAYERS KEY
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         // MUSIC CREATION
-
         this.backgroundMusic = this.sound.add("game-theme", {
             loop: true,
             volume: 0.4,
@@ -266,7 +279,7 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     update(time, delta) {
-        if (!this.isRespawning && !this.localPaused) {
+        if (!this.isRespawning && !this.localPaused && !this.gameEnded) {
             this.playerController.update(time, delta);
             this.jumpMeter.update(time, delta);
         }
@@ -277,7 +290,7 @@ export default class MainScene extends Phaser.Scene  {
             remotePlayer.update();
         }
 
-        if (this.networkManager && this.player) {
+        if (this.networkManager && this.player && !this.gameEnded) {
             if (!this.lastNetworkSend) this.lastNetworkSend = 0;
 
             if (time - this.lastNetworkSend > 50) {
@@ -295,12 +308,18 @@ export default class MainScene extends Phaser.Scene  {
         }
 
         // Push Mechanic
-        if (Phaser.Input.Keyboard.JustDown(this.interactKey)) {
+        if (!this.gameEnded && Phaser.Input.Keyboard.JustDown(this.interactKey)) {
             this.tryPushRemotePlayer();
         }
     }
 
     updatePlayerSFX() {
+        if (this.isRespawning || this.localPaused || this.gameEnded) {
+            this.playerSounds.walk?.stop();
+            this.playerSounds.fall?.stop();
+            return;
+        }
+
         const body = this.player.sprite.body;
 
         const isOnGround = body.blocked.down;
@@ -454,11 +473,15 @@ export default class MainScene extends Phaser.Scene  {
     handlePlayerDeath() {
         if (this.isRespawning) return;
 
+        this.deathCount++;
+
         this.playerSounds.walk.stop();
         this.playerSounds.fall.stop();
 
         this.isRespawning = true;
         this.playerInvincible = true;
+
+        this.networkManager?.sendPlayerStatus?.("respawning");
 
         this.player.sprite.setVelocity(0, 0);
         this.player.sprite.body.enable = false;
@@ -499,6 +522,8 @@ export default class MainScene extends Phaser.Scene  {
 
         this.isRespawning = false;
 
+        this.networkManager?.sendPlayerStatus?.("active");
+
         // Spawn Protection
         this.time.delayedCall(1000, () => {
             this.playerInvincible = false;
@@ -517,7 +542,6 @@ export default class MainScene extends Phaser.Scene  {
         playerSprite.setVelocityY(hazard.knockbackY || -300); // i.e. 200 and -300 here are default values if there isn't a prop defined
 
         this.playerInvincible = true;
-        
 
         // add a time delay of 1000ms before turning off Invincibility
         this.time.delayedCall(1000, () => {
@@ -526,18 +550,72 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        
-        if (this.gameWon === false){
-            console.log("Reached Goal!");
-
-            if (this.networkManager) {
-                this.networkManager.winGame();
-                console.log("message sent to win")
-            }
-        }
+        if (this.gameEnded) return;
 
         this.gameWon = true;
+        this.gameEnded = true;
+
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
+
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
+
+        const myName = this.game.registry.get("nickname");
+
+        // send a signal to p2pmanager
+        this.networkManager?.winGame?.();
+
+        this.showEndStats(true, myName);
+    }
+
+    handleGameEnd(message) {
+        if (this.gameEnded) return;
+
+        this.gameEnded = true;
+
+        const winner = message.winner || message.username || "Another player";
+        const myName = this.game.registry.get("nickname");
+
+        const didIWin = winner == myName;
+
+        this.gameWon = didIWin;
+
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
+
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
         
-        // try sending server player win message here?
+        // this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
+        //     fontSize: didIWin ? "56px" : "42px",
+        //     color: "#ffffff",
+        //     stroke: "#000000",
+        //     strokeThickness: 8,
+        //     fontFamily: "Connection",
+        //     align: "center",
+        // }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
+
+        this.showEndStats(didIWin, winner);
+    }
+
+    showEndStats(didIWin, winnerName) {
+        const elapsedMs = this.time.now - this.gameStartTime;
+        const elapsedSeconds = Math.floor(elapsedMs / 1000);
+
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+
+        const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+        const showGameStats = this.game.registry.get("showGameStats");
+
+        showGameStats?.({
+            didIWin,
+            winnerName,
+            deathCount: this.deathCount,
+            jumpsMade: this.jumpsMade,
+            timeCompleted: didIWin ? formattedTime : null,
+        });
     }
 }
