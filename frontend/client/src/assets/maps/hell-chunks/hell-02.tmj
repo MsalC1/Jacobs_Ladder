@@ -341,11 +341,11 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/tilesets\/castles-tileset.png",
+         "image":"..\/..\/tilesets\/castle-tileset.png",
          "imageheight":224,
          "imagewidth":256,
          "margin":0,
-         "name":"castles-tileset",
+         "name":"castle-tileset",
          "spacing":0,
          "tilecount":56,
          "tileheight":32,
