@@ -495,6 +495,19 @@
          "tilecount":3072,
          "tileheight":32,
          "tilewidth":32
+        }, 
+        {
+         "columns":10,
+         "firstgid":3129,
+         "image":"..\/..\/tilesets\/hell-tileset.png",
+         "imageheight":192,
+         "imagewidth":320,
+         "margin":0,
+         "name":"hell-tileset",
+         "spacing":0,
+         "tilecount":60,
+         "tileheight":32,
+         "tilewidth":32
         }],
  "tilewidth":32,
  "type":"map",

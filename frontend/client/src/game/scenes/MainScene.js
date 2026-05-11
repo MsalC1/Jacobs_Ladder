@@ -9,7 +9,7 @@ import JumpMeter from "../systems/JumpMeter";
 import RemotePlayer from "../entities/RemotePlayer";
 
 // Stages
-import { createHellStageOrder } from "../levels/stageConfig";
+import { createStageOrder } from "../levels/stageConfig";
 
 // Level Manager
 import LevelManager from "../systems/LevelManager";
@@ -52,9 +52,9 @@ export default class MainScene extends Phaser.Scene  {
         // GAME SEED CHUNK GENERATION
         const roomCode = this.game.registry.get("roomCode") || "DEFAULT_ROOM";
 
-        this.hellStageChunks = createHellStageOrder(roomCode);
+        this.stageChunks = createStageOrder(roomCode);
 
-        for (const chunk of this.hellStageChunks) {
+        for (const chunk of this.stageChunks) {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
         }
 
@@ -98,7 +98,7 @@ export default class MainScene extends Phaser.Scene  {
         this.createPlayerAnimations();
 
         // LEVEL CREATION
-        this.levelManager = new LevelManager(this, this.hellStageChunks);
+        this.levelManager = new LevelManager(this, this.stageChunks);
         this.levelManager.create();
 
         const spawn = this.levelManager.spawnPoint;
@@ -553,23 +553,25 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        if (this.gameEnded) return;
+        // if (this.gameEnded) return;
 
-        this.gameWon = true;
-        this.gameEnded = true;
+        // this.gameWon = true;
+        // this.gameEnded = true;
 
-        this.player.sprite.setVelocity(0, 0);
-        this.player.sprite.body.enable = false;
+        // this.player.sprite.setVelocity(0, 0);
+        // this.player.sprite.body.enable = false;
 
-        this.playerSounds.walk?.stop();
-        this.playerSounds.fall?.stop();
+        // this.playerSounds.walk?.stop();
+        // this.playerSounds.fall?.stop();
 
-        const myName = this.game.registry.get("nickname");
+        // const myName = this.game.registry.get("nickname");
 
-        // send a signal to p2pmanager
-        this.networkManager?.winGame?.();
+        // // send a signal to p2pmanager
+        // this.networkManager?.winGame?.();
 
-        this.showEndStats(true, myName);
+        // this.showEndStats(true, myName);
+
+        console.log("reached goal");
     }
 
     handleGameEnd(message) {

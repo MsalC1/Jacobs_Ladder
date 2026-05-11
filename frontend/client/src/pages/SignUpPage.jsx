@@ -7,6 +7,8 @@ function SignUpPage() {
     const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
 
+    const { URL } = location.state || {};
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
         // Clear error for this field when user starts typing
@@ -57,7 +59,7 @@ function SignUpPage() {
         const xhttp = new XMLHttpRequest();
         const data = JSON.stringify(formData);
         const method = "POST";
-        const url = "https://game-backend-cagb.onrender.com/register" // change this to actual backend ref
+        const url = URL + "/register" 
 
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")
@@ -97,7 +99,7 @@ function SignUpPage() {
 
     function routeLobby(){
         navigate("/lobby", {
-            state: {nickname: formData.username}
+            state: {nickname: formData.username, URL: URL}
         })
     }
 

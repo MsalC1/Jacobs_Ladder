@@ -5,6 +5,8 @@ function LoginPage() {
     const [formData, setFormData] = useState({username: '', password: ''});
     const [errors, setErrors] = useState({}); 
     const [serverError, setServerError] = useState('');
+    const [URL] = useState('http://localhost:5000') // MAIN URL, SEND TO ALL OTHER PAGES
+    // prod URL: https://game-backend-cagb.onrender.com
     const navigate = useNavigate();
 
 
@@ -42,7 +44,7 @@ function LoginPage() {
         const method = "POST";
         const data = JSON.stringify(formData)
         // const url = "http://localhost:5000/login"
-        const url = "https://game-backend-cagb.onrender.com/login"
+        const url = URL + "/login";
 
 
         xhttp.open(method, url, true);
@@ -80,13 +82,15 @@ function LoginPage() {
 
     function routeLobby(token){
         navigate("/lobby", {
-            state: {nickname: formData.username, token: token}
+            state: {nickname: formData.username, token: token, URL: URL}
         })
     }
 
     function routeSignUp (){
         
-        navigate("/signup")
+        navigate("/signup", {
+            state: {URL: URL}
+        })
 
     }
 

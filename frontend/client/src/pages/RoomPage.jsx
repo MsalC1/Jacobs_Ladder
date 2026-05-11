@@ -12,6 +12,7 @@ function RoomPage() {
         nickname = localStorage.getItem("nickname") || "Guest",
         roomCode,
         token = localStorage.getItem("token"),
+        URL,
     } = location.state || {};
 
     const [players, setPlayers] = useState([]);
@@ -26,7 +27,7 @@ function RoomPage() {
             return;
         }
 
-        const socket = io("https://game-backend-cagb.onrender.com/");
+        const socket = io(URL);
         // const socket = io("http://localhost:5000"); // testing
         socketRef.current = socket;
 
@@ -89,6 +90,7 @@ function RoomPage() {
                     nickname,
                     roomCode,
                     token,
+                    URL,
                 },
             });
         });

@@ -27,6 +27,7 @@ function GamePage(){
         nickname = localStorage.getItem("nickname") || "Guest",
         roomCode,
         // token = localStorage.getItem("token"),
+        URL,
     } = location.state || {};
 
     const [players, setPlayers] = useState([]);
@@ -41,7 +42,7 @@ function GamePage(){
         // const socket = io("http://localhost:5000");
 
         // prod
-        const socket = io("https://game-backend-cagb.onrender.com/");
+        const socket = io(URL);
         const manager = new P2PManager(socket, roomCode, nickname)
 
         connectionRef.current = manager;
@@ -61,7 +62,7 @@ function GamePage(){
 
             if (token) {
                 try {
-                    const res = await fetch("https://game-backend-cagb.onrender.com/profile", {
+                    const res = await fetch(URL + "/profile", {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

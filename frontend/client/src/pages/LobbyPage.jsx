@@ -14,6 +14,7 @@ function LobbyPage() {
     const {
         nickname = storedNickname || "Guest",
         token = storedToken,
+        URL,
     } = location.state || {};
 
     const [roomCode, setRoomCode] = useState("");
@@ -32,6 +33,7 @@ function LobbyPage() {
                 nickname: nickname || "Guest",
                 roomCode: srvrRoom,
                 token,
+                URL: URL,
             },
         });
 
@@ -49,6 +51,7 @@ function LobbyPage() {
                 nickname: nickname || "Guest",
                 roomCode: srvrRoom,
                 token,
+                URL: URL,
             },
         });
     }
@@ -70,7 +73,7 @@ function LobbyPage() {
         const xhttp = new XMLHttpRequest();
         const method = "GET";
         // const url = "http://localhost:5000/profile"
-        const url = "https://game-backend-cagb.onrender.com/profile"
+        const url = URL + "/profile";
         
 
         xhttp.open(method, url, true);
