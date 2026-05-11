@@ -212,6 +212,10 @@ def login():
 @token_required
 def get_profile():
     player = Player.query.get(request.player_id)
+    
+    if not player:
+        return jsonify({'error': 'Player not found'}), 404
+
     return jsonify({
         'username': player.username,
         'wins': player.total_wins,
