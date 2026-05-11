@@ -19,9 +19,10 @@ app.config['SECRET_KEY'] = "change-me"
 # SHOULD REMOVE THIS, REDUNDANT...
 CORS(app, origins=[
     'http://localhost:3000',
+    'http://localhost:3001'
     'http://localhost:5000' # don't have a front end deployed yet...
      ],
-     resources={r"/*": {"origins": "http://localhost:3000"}}
+     resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:3001"]}}
 )
 
 # Socket.IO with production settings
