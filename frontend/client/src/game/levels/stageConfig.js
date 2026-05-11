@@ -4,7 +4,7 @@ function hashStringToSeed(str) {
     let hash = 2166136261;
 
     for (let i = 0; i < str.length; i++) {
-        hash ^= str.charCodeAt(1);
+        hash ^= str.charCodeAt(i);
         hash = Math.imul(hash, 16777619);
     }
 

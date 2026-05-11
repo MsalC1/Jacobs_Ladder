@@ -62,12 +62,12 @@ function SignUpPage() {
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")
         
-        console.log(data)
+        // console.log(data)
         xhttp.send(data);
 
         xhttp.onload = function () {
             if (xhttp.status >= 200 && xhttp.status < 300) {
-                console.log("User created, routing to Lobby");
+                // console.log("User created, routing to Lobby");
                 routeLobby();
             } else {
                 // Parse error message from backend
