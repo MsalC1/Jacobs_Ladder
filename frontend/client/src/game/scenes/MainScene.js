@@ -31,7 +31,6 @@ export default class MainScene extends Phaser.Scene  {
         this.load.image("jump-bar-bg", jumpBarBg);
 
         // PLAYER SFX
-
         const walkSFX       = new URL("../../assets/sfx/player-walking.ogg", import.meta.url).href;
         const jumpSFX       = new URL("../../assets/sfx/player-jump.ogg", import.meta.url).href;
         const fallSFX       = new URL("../../assets/sfx/player-falling.ogg", import.meta.url).href;
@@ -49,7 +48,11 @@ export default class MainScene extends Phaser.Scene  {
         const dungeon_crawl_image_path  = new URL("../../assets/tilesets/dungeon-tileset.png", import.meta.url).href;
         const hell_image_path           = new URL("../../assets/tilesets/hell-tileset.png", import.meta.url).href;
 
-        this.hellStageChunks = createHellStageOrder();
+
+        // GAME SEED CHUNK GENERATION
+        const roomCode = this.game.registry.get("roomCode") || "DEFAULT_ROOM";
+
+        this.hellStageChunks = createHellStageOrder(roomCode);
 
         for (const chunk of this.hellStageChunks) {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
@@ -68,7 +71,6 @@ export default class MainScene extends Phaser.Scene  {
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
 
         // BACKGROUND MUSIC
-
         const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
         this.load.audio("game-theme", gameTheme);
     }

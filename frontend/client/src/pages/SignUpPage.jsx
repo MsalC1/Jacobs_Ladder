@@ -103,7 +103,7 @@ function SignUpPage() {
 
     return (
         <div className="dynamic-bg" style={styles.page}>
-            <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
+            {/* <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
                 <div className="dynamic-bg__track">
                 <span className="dynamic-bg__text">
                     JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
@@ -123,7 +123,7 @@ function SignUpPage() {
                     JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
                 </span>
                 </div>
-            </div>
+            </div> */}
         <div className="menu-card" style={styles.card}>
             <h1 style={styles.title}>Jacobs Ladder</h1>
 
