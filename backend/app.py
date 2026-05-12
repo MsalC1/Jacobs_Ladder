@@ -18,9 +18,9 @@ CORS(app, origins=[
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5000', # don't have a front end deployed yet...
-    'https://jacobsladder.vercel.app/'
+    'https://jacobsladder.vercel.app'
      ],
-     resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:3001", "https://jacobsladder.vercel.app/"]}}
+     resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:3001", "https://jacobsladder.vercel.app"]}}
 )
 
 # Socket.IO with production settings
