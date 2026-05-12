@@ -608,7 +608,7 @@ export default class MainScene extends Phaser.Scene  {
 
         this.showEndStats(true, myName);
 
-        console.log("reached goal");
+        // console.log("reached goal");
     }
 
     handleGameEnd(message) {
@@ -712,30 +712,69 @@ export default class MainScene extends Phaser.Scene  {
         }
     }
 
+    // createBackgrounds() {
+    //     // LEVEL BACKGROUND CREATION
+    //     this.currentBackgroundKey = "HELL";
+
+    //     const centerX = this.levelManager.levelWidth / 2;
+
+    //     const chunksPerStage = 5;
+    //     const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+    //     const hellBottomY = this.levelManager.levelHeight;
+    //     const caveBottomY = this.levelManager.levelHeight - stageHeight;
+    //     const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
+
+    //     this.backgrounds = {
+    //         HELL: this.add.image(centerX, hellBottomY, "HELL"),
+    //         CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+    //         OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN")
+    //     };
+
+    //     for (const bg of Object.values(this.backgrounds)) {
+    //         bg.setOrigin(0.5, 1);
+
+    //         const scaleX = this.levelManager.levelWidth / bg.width;
+    //         const scaleY = stageHeight / bg.height;
+    //         const scale = Math.max(scaleX, scaleY);
+
+    //         bg.setScale(scale);
+
+    //         bg.setScrollFactor(1);
+
+    //         bg.setDepth(-50);
+    //         bg.setAlpha(0);
+    //     }
+        
+    //     this.backgrounds.HELL.setAlpha(1);
+    // }
+
     createBackgrounds() {
-        // LEVEL BACKGROUND CREATION
         this.currentBackgroundKey = "HELL";
 
         const centerX = this.levelManager.levelWidth / 2;
-        const centerY = this.levelManager.levelHeight / 2;
+
+        const chunksPerStage = 5;
+        const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+        const hellBottomY = this.levelManager.levelHeight;
+        const caveBottomY = this.levelManager.levelHeight - stageHeight;
+        const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
 
         this.backgrounds = {
-            HELL: this.add.image(centerX, centerY, "HELL"),
-            CAVE: this.add.image(centerX, centerY, "CAVE"),
-            OCEAN: this.add.image(centerX, centerY, "OCEAN")
+            HELL: this.add.image(centerX, hellBottomY, "HELL"),
+            CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+            OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN"),
         };
 
         for (const bg of Object.values(this.backgrounds)) {
-            bg.setOrigin(0.5, 1.1);
-
-            const scale = this.levelManager.levelWidth / bg.width;
-            bg.setScale(scale);
-
-            bg.setScrollFactor(0.35);
+            bg.setOrigin(0.5, 1);
+            bg.setDisplaySize(800, stageHeight);
+            bg.setScrollFactor(1);
             bg.setDepth(-50);
             bg.setAlpha(0);
         }
-        
+
         this.backgrounds.HELL.setAlpha(1);
     }
 
@@ -743,10 +782,15 @@ export default class MainScene extends Phaser.Scene  {
         if (!this.backgroundMusic) return;
         if (this.currentMusicKey === nextKey) return;
 
-        const oldMusic = this.backgroundMusic[this.currentMusicKey];
+        const oldKey = this.currentMusicKey;
+        const oldMusic = this.backgroundMusic[oldKey];
         const newMusic = this.backgroundMusic[nextKey];
 
         if (!oldMusic || !newMusic) return;
+
+        // kill previous tweens so volume transitions do not stack weirdly
+        this.tweens.killTweensOf(oldMusic);
+        this.tweens.killTweensOf(newMusic);
 
         this.currentMusicKey = nextKey;
 
@@ -761,11 +805,13 @@ export default class MainScene extends Phaser.Scene  {
             duration: 1200,
             ease: "Sine.easeInOut",
             onComplete: () => {
-                oldMusic.stop();
+                // only stop if it did not become active again during the transition
+                if (this.currentMusicKey !== oldKey) {
+                    oldMusic.stop();
+                }
             },
         });
 
-        // Fade in new music
         this.tweens.add({
             targets: newMusic,
             volume: this.musicVolume,
