@@ -21,8 +21,8 @@ export default class MainScene extends Phaser.Scene  {
 
     preload(){
         // PLAYER ASSETS
-        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
-        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left.png", import.meta.url).href;
+        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right2.PNG", import.meta.url).href;
+        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left2.PNG", import.meta.url).href;
 
         const jumpBar       = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
         const jumpBarBg     = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
@@ -66,12 +66,15 @@ export default class MainScene extends Phaser.Scene  {
         this.load.image("hell-tiles", hell_image_path);
 
         // BACKGROUND
-        const background = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
-        this.load.image("HELL", background);
+        const hellBackground = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
+        const caveBackground = new URL("../../assets/Locations/CAVE.PNG", import.meta.url).href;
+
+        this.load.image("HELL", hellBackground);
+        this.load.image("CAVE", caveBackground);
 
         // PLAYER ANIMATIONS
-        this.load.spritesheet('player-right', playerRight, { frameWidth: 256, frameHeight: 256 });
-        this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
+        this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
+        this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
 
         // BACKGROUND MUSIC
         const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
@@ -91,9 +94,19 @@ export default class MainScene extends Phaser.Scene  {
         const HURT_VOL = 0.2;
 
         // LEVEL BACKGROUND CREATION
+<<<<<<< HEAD
         const bg = this.add.image(400, 2150, "HELL");
         bg.setDisplaySize(800, 4320);
         bg.setDepth(-15);
+=======
+        const bgHell = this.add.image(400, 2150*3, "HELL");
+        bgHell.setDisplaySize(800, 4320);
+        bgHell.setDepth(-10);
+
+        const bgCave = this.add.image(400, 2150, "CAVE");
+        bgCave.setDisplaySize(800, 4320);
+        bgCave.setDepth(-10);
+>>>>>>> 88999092e74c93075867cf66e157d1dbdca7e603
         
         this.createPlayerAnimations();
 
