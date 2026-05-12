@@ -47,6 +47,7 @@ export default class MainScene extends Phaser.Scene  {
         const castle_image_path         = new URL("../../assets/tilesets/castles-tileset.png", import.meta.url).href;
         const dungeon_crawl_image_path  = new URL("../../assets/tilesets/dungeon-tileset.png", import.meta.url).href;
         const hell_image_path           = new URL("../../assets/tilesets/hell-tileset.png", import.meta.url).href;
+        const ocean_image_path          = new URL("../../assets/tilesets/ocean-tileset.png", import.meta.url).href;
 
 
         // GAME SEED CHUNK GENERATION
@@ -64,6 +65,7 @@ export default class MainScene extends Phaser.Scene  {
         this.load.image("castle-tiles", castle_image_path);
         this.load.image("decor-tiles", dungeon_crawl_image_path);
         this.load.image("hell-tiles", hell_image_path);
+        this.load.image("ocean-tiles", ocean_image_path);
 
         // BACKGROUND
         const hellBackground = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
@@ -562,23 +564,23 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        // if (this.gameEnded) return;
+        if (this.gameEnded) return;
 
-        // this.gameWon = true;
-        // this.gameEnded = true;
+        this.gameWon = true;
+        this.gameEnded = true;
 
-        // this.player.sprite.setVelocity(0, 0);
-        // this.player.sprite.body.enable = false;
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
 
-        // this.playerSounds.walk?.stop();
-        // this.playerSounds.fall?.stop();
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
 
-        // const myName = this.game.registry.get("nickname");
+        const myName = this.game.registry.get("nickname");
 
-        // // send a signal to p2pmanager
-        // this.networkManager?.winGame?.();
+        // send a signal to p2pmanager
+        this.networkManager?.winGame?.();
 
-        // this.showEndStats(true, myName);
+        this.showEndStats(true, myName);
 
         console.log("reached goal");
     }

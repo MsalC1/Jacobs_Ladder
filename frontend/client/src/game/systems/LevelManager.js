@@ -30,8 +30,9 @@ export default class LevelManager {
             const castleTiles   = map.addTilesetImage("castle-tileset", "castle-tiles");
             const hellTiles     = map.addTilesetImage("hell-tileset", "hell-tiles");
             const decorTiles    = map.addTilesetImage("hazards-tileset", "decor-tiles");
+            const oceanTiles    = map.addTilesetImage("ocean-tileset", "ocean-tiles");
 
-            const allTilesets = [castleTiles, hellTiles, decorTiles].filter(Boolean);
+            const allTilesets = [castleTiles, hellTiles, decorTiles, oceanTiles].filter(Boolean);
 
             const backgroundLayer   = map.createLayer("Background-Layer", allTilesets, 0, yOffset);
             const platformLayer     = map.createLayer("Platform-Layer", allTilesets, 0, yOffset);
