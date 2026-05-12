@@ -67,10 +67,12 @@ export default class MainScene extends Phaser.Scene  {
 
         // BACKGROUND
         const hellBackground = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
-        const caveBackground = new URL("../../assets/Locations/CAVE.PNG", import.meta.url).href;
+        const caveBackground = new URL("../../assets/Locations/CAVE.jpg", import.meta.url).href;
+        const oceanBackground = new URL("../../assets/Locations/OCEAN.jpg", import.meta.url).href;
 
         this.load.image("HELL", hellBackground);
         this.load.image("CAVE", caveBackground);
+        this.load.image("OCEAN", oceanBackground);
 
         // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
@@ -694,12 +696,17 @@ export default class MainScene extends Phaser.Scene  {
         const playerY = this.player.sprite.y;
 
         const chunksPerStage = 5;
-        const caveStartY = this.levelManager.levelHeight - this.levelManager.chunkHeight * chunksPerStage;
+        const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
 
-        if (playerY <= caveStartY) {
+        const caveStartY = this.levelManager.levelHeight - stageHeight;
+        const oceanStartY = this.levelManager.levelHeight - stageHeight * 2;
+
+        if (playerY <= oceanStartY) {
+            this.transitionBackground("OCEAN");
+        } else if (playerY <= caveStartY) {
             this.transitionBackground("CAVE");
         } else {
-            this.transitionBackground("HELL");
+            this.transitionBackground("HELL")
         }
     }
 
@@ -713,6 +720,7 @@ export default class MainScene extends Phaser.Scene  {
         this.backgrounds = {
             HELL: this.add.image(centerX, centerY, "HELL"),
             CAVE: this.add.image(centerX, centerY, "CAVE"),
+            OCEAN: this.add.image(centerX, centerY, "OCEAN")
         };
 
         for (const bg of Object.values(this.backgrounds)) {
