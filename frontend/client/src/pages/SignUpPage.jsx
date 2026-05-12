@@ -64,7 +64,6 @@ function SignUpPage() {
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")
         
-        // console.log(data)
         xhttp.send(data);
 
         xhttp.onload = function () {
@@ -104,28 +103,6 @@ function SignUpPage() {
     }
 
     return (
-        <div className="dynamic-bg" style={styles.page}>
-            {/* <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
-                <div className="dynamic-bg__track">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div>
-
-            <div className="dynamic-bg__marquee dynamic-bg__marquee--bottom">
-                <div className="dynamic-bg__track dynamic-bg__track--reverse">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div> */}
         <div className="menu-card" style={styles.card}>
             <h1 style={styles.title}>Jacobs Ladder</h1>
 
@@ -183,7 +160,6 @@ function SignUpPage() {
 
                 <button type="submit" style={styles.button}>Sign Up</button>
             </form>
-        </div>
         </div>
     );
 }
