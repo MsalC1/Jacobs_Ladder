@@ -59,8 +59,6 @@ export default class MainScene extends Phaser.Scene  {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
         }
 
-        // console.log("Room seed:", roomCode);
-        // console.log("Chunk order:", this.hellStageChunks.map((chunk) => chunk.key));
 
         this.load.image("castle-tiles", castle_image_path);
         this.load.image("decor-tiles", dungeon_crawl_image_path);
@@ -482,8 +480,6 @@ export default class MainScene extends Phaser.Scene  {
 
         if (message.targetPlayerId !== myPlayerId) return;
 
-        // console.log("You have been pushed!");
-
         this.player.sprite.setVelocityX(message.direction * message.forceX);
         this.player.sprite.setVelocityY(message.forceY);
     }
@@ -627,14 +623,6 @@ export default class MainScene extends Phaser.Scene  {
         this.playerSounds.walk?.stop();
         this.playerSounds.fall?.stop();
         
-        // this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
-        //     fontSize: didIWin ? "56px" : "42px",
-        //     color: "#ffffff",
-        //     stroke: "#000000",
-        //     strokeThickness: 8,
-        //     fontFamily: "Connection",
-        //     align: "center",
-        // }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
 
         this.showEndStats(didIWin, winner);
     }

@@ -43,7 +43,6 @@ function LoginPage() {
         const xhttp = new XMLHttpRequest();
         const method = "POST";
         const data = JSON.stringify(formData)
-        // const url = "http://localhost:5000/login"
         const url = URL + "/login";
 
 
@@ -54,7 +53,6 @@ function LoginPage() {
 
         xhttp.onload = function() {
             if (xhttp.status >= 200 && xhttp.status < 300) {
-                // console.log("User Logged in with token: ", this.responseText);
 
                 const data = JSON.parse(this.responseText);
                 const genToken = data.token;
@@ -95,28 +93,7 @@ function LoginPage() {
     }
 
     return (
-        <div className="dynamic-bg" style={styles.page}>
-            {/* <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
-                <div className="dynamic-bg__track">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div>
 
-            <div className="dynamic-bg__marquee dynamic-bg__marquee--bottom">
-                <div className="dynamic-bg__track dynamic-bg__track--reverse">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div> */}
         <div className="menu-card" style={styles.card}>
             <h1 style={styles.title}>Jacobs Ladder</h1>
 
@@ -164,20 +141,10 @@ function LoginPage() {
                 New to Jacobs Ladder? Sign Up!
             </button>
         </div>
-        </div>
     );
 }
 
 const styles = {
-    // container: {
-    //     height: "100vh",
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //     background: "#1a1a1a",
-    //     color: "#fff"
-    // },
     page: {
         minHeight: "100vh",
         // background: "#1a1a1a",

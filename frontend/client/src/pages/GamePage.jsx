@@ -36,11 +36,6 @@ function GamePage(){
         if (!gameRef.current) return;
         if (gameInstanceRef.current) return;
 
-        // continue working on ts
-
-        // testing
-        // const socket = io("http://localhost:5000");
-
         // prod
         const socket = io(URL);
         const manager = new P2PManager(socket, roomCode, nickname)
@@ -86,8 +81,7 @@ function GamePage(){
         });
 
         manager.peerJoined = (gotPlayers) => {
-            // console.log("setting players to current players in room"); //debug
-            // console.log(gotPlayers);
+           
             setPlayers(gotPlayers);
         };
 

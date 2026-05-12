@@ -28,7 +28,6 @@ function RoomPage() {
         }
 
         const socket = io(URL);
-        // const socket = io("http://localhost:5000"); // testing
         socketRef.current = socket;
 
         socket.emit("join_room", {
@@ -108,7 +107,7 @@ function RoomPage() {
 
             socket.disconnect();
         };
-    }, [roomCode, nickname, token, navigate]); // Remove countdown if shit hits the fan
+    }, [roomCode, nickname, token, navigate]);
 
     function toggleReady() {
         const nextReady = !isReady;
@@ -136,28 +135,6 @@ function RoomPage() {
     }
 
     return (
-        <div className="dynamic-bg" style={styles.page}>
-            {/* <div className="dynamic-bg__marquee dynamic-bg__marquee--top">
-                <div className="dynamic-bg__track">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div>
-
-            <div className="dynamic-bg__marquee dynamic-bg__marquee--bottom">
-                <div className="dynamic-bg__track dynamic-bg__track--reverse">
-                <span className="dynamic-bg__text">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                <span className="dynamic-bg__text" aria-hidden="true">
-                    JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;JACOB'S LADDER&nbsp;&nbsp;
-                </span>
-                </div>
-            </div> */}
             <div className="menu-card room-card">
                 <h1 className="room-title">Room</h1>
 
@@ -188,7 +165,6 @@ function RoomPage() {
                     Leave Room
                 </button>
             </div>
-        </div>
     );
 }
 

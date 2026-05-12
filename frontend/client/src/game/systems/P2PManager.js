@@ -41,20 +41,20 @@ export default class P2PManager {
 
         // get ice candidates and respond to them
         this.peerConnection.onicecandidate = (event) => {
-            console.log("peer ICE candidate");
+            // console.log("peer ICE candidate");
             if(event.candidate && this.targetSID) {
                 this.socket.emit('signal', {to: this.targetSID, data: {type: 'candidate', payload: event.candidate}}) // check if this is correct?
             }
         };
 
         // FOR DEBUG
-        this.peerConnection.oniceconnectionstatechange = () => {
-            console.log("ICE State: ", this.peerConnection.iceConnectionState);
-        }
+        // this.peerConnection.oniceconnectionstatechange = () => {
+        //     console.log("ICE State: ", this.peerConnection.iceConnectionState);
+        // }
 
         // When user leaves room (ts not working):
         this.socket.on("peer_left", (msg) => {
-            console.log("Peer left Test:",msg);
+            // console.log("Peer left Test:",msg);
 
             const sid = (typeof msg === "string") ? msg : msg.sid;
 
@@ -74,7 +74,7 @@ export default class P2PManager {
             // listen for offer type signals
             if (type === 'offer'){
 
-                console.log("viewing offer");
+                // console.log("viewing offer");
                 await this.peerConnection.setRemoteDescription( new RTCSessionDescription(payload));
                 const answer = await this.peerConnection.createAnswer();
                 await this.peerConnection.setLocalDescription(answer);
@@ -87,13 +87,13 @@ export default class P2PManager {
 
             // listen for answer type signals
             if (type === 'answer'){
-                console.log("viewing answer")
+                // console.log("viewing answer")
                 await this.peerConnection.setRemoteDescription( new RTCSessionDescription(payload) )
             }
 
             // listen for candidates type signals
             if (type === 'candidate'){
-                console.log("viewing candidate");
+                // console.log("viewing candidate");
                 try {
                     await this.peerConnection.addIceCandidate( new RTCIceCandidate(payload));
                 } catch (e) {
@@ -104,7 +104,7 @@ export default class P2PManager {
 
         // on peers
         this.socket.on('peers', async (msg) => {
-            console.log("sending peers names to all clients") //debug
+            // console.log("sending peers names to all clients") 
             
             const playersInRoom = Array.isArray(msg) ? msg : Array.isArray(msg.players_in_room) ? msg.players_in_room : []; // if player list is empty assign an empty array
             
@@ -114,7 +114,7 @@ export default class P2PManager {
 
         // on new_peer
         this.socket.on('new_peer', async (msg) => {
-            console.log("New Peer in a room", msg.nickname);
+            // console.log("New Peer in a room", msg.nickname);
 
             try {
                 this.targetSID = msg.sid;
@@ -145,7 +145,7 @@ export default class P2PManager {
         };
 
         this.socket.on("game_end", (msg) => {
-            console.log("Game ended:", msg);
+            // console.log("Game ended:", msg);
             this.onGameEnd?.(msg);
         })
     }
