@@ -9,20 +9,18 @@ import re # Added for nickname number detection
 app = Flask(__name__)
 
 # Use the environment variable for secret key in production
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-for-production')
-
-#Testing
-app.config['SECRET_KEY'] = "change-me"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
 # Configure CORS for production
 # SHOULD REMOVE THIS, REDUNDANT...
 CORS(app, origins=[
     'http://localhost:3000',
-    'http://localhost:3001'
-    'http://localhost:5000' # don't have a front end deployed yet...
+    'http://localhost:3001',
+    'http://localhost:5000', # don't have a front end deployed yet...
+    'https://jacobsladder.vercel.app'
      ],
-     resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:3001"]}}
+     resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:3001", "https://jacobsladder.vercel.app"]}}
 )
 
 # Socket.IO with production settings
