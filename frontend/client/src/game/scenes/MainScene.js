@@ -79,8 +79,8 @@ export default class MainScene extends Phaser.Scene  {
         // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
-        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeigh: 280});
-        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeigh: 280});
+        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeight: 280});
+        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeight: 280});
 
 
         // BACKGROUND MUSIC
