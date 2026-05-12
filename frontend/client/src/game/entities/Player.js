@@ -8,7 +8,7 @@ export default class Player {
 
         const HITBOX_WIDTH_PX     = WIDTH_PX * 0.25;   // 75px
         const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.45;   // 410px
-        const HITBOX_OFFSET_X_PX  = SPRITE_WIDTH_PX * 1.5;     // 220px
+        const HITBOX_OFFSET_X_PX  = SPRITE_WIDTH_PX * 1;     // 220px
         const HITBOX_OFFSET_Y_PX  = SPRITE_HEIGHT_PX * 1.15;    // 100px
 
         this.scene = scene;
