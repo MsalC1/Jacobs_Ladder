@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 function SignUpPage() {
     const [formData, setFormData] = useState({ username: '', password: '', email: '' });
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const { URL } = location.state || {};
+    const API_URL = location.state?.URL || "http://localhost:5000";
+
+    // const { URL } = location.state || {};
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -59,7 +63,7 @@ function SignUpPage() {
         const xhttp = new XMLHttpRequest();
         const data = JSON.stringify(formData);
         const method = "POST";
-        const url = URL + "/register" 
+        const url = `${API_URL}/register` 
 
         xhttp.open(method, url, true);
         xhttp.setRequestHeader("Content-Type", "application/json")
@@ -69,7 +73,7 @@ function SignUpPage() {
         xhttp.onload = function () {
             if (xhttp.status >= 200 && xhttp.status < 300) {
                 // console.log("User created, routing to Lobby");
-                routeLobby();
+                routeLogin();
             } else {
                 // Parse error message from backend
                 try {
@@ -96,9 +100,9 @@ function SignUpPage() {
 
     }
 
-    function routeLobby(){
-        navigate("/lobby", {
-            state: {nickname: formData.username, URL: URL}
+    function routeLogin(){
+        navigate("/", {
+            state: {nickname: formData.username, URL: API_URL}
         })
     }
 
