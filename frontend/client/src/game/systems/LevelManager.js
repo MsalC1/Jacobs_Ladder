@@ -13,11 +13,15 @@ export default class LevelManager {
         this.hazards = null;
 
         this.goals = null;
+
+        this.checkpointList = [];
+        this.currentCheckpoint = null;
     }
 
     create() {
         this.hazards = this.scene.physics.add.staticGroup();
         this.goals = this.scene.physics.add.staticGroup();
+        this.checkpoints = this.scene.physics.add.staticGroup();
 
         this.chunks.forEach((chunk, index) => {
             const yOffset = (this.chunks.length - 1 - index) * this.chunkHeight;
@@ -36,8 +40,8 @@ export default class LevelManager {
 
             platformLayer.setCollisionByExclusion([-1]);
             backgroundLayer?.setDepth(-5);
-            platformLayer?.setDepth(0);
-            hazardVisualLayer?.setDepth(1);
+            platformLayer?.setDepth(1);
+            hazardVisualLayer?.setDepth(0);
             decorLayer?.setDepth(-10);
 
             this.platformLayers.push(platformLayer);
@@ -112,7 +116,33 @@ export default class LevelManager {
                     this.goals.add(goal);
                 }
             }
+
+            const checkpointLayer = map.getObjectLayer("Checkpoints");
+
+            if (checkpointLayer) {
+                checkpointLayer.objects.forEach((obj) => {
+                    const type = this.getObjectProperty(obj, "type", obj.type);
+
+                    if (type === "checkpoint" || obj.name === "checkpoint") {
+                        const checkpoint = {
+                            id: this.getObjectProperty(obj, "id", obj.name || "checkpoint"),
+                            order: this.getObjectProperty(obj, "order", 0),
+
+                            // center of object
+                            x: obj.x + obj.width / 2,
+                            y: obj.y + obj.height / 2 + yOffset,
+
+                            activated: false,
+                        };
+
+                        this.checkpointList.push(checkpoint);
+                    }
+                });
+            }
         });
+
+        this.checkpointList.sort((a, b) => b.y - a.y);
+        this.currentCheckpoint = this.spawnPoint;
 
         this.scene.physics.world.setBounds(0, 0, this.levelWidth, this.levelHeight);
         this.scene.cameras.main.setBounds(0, 0, this.levelWidth, this.levelHeight);
@@ -152,5 +182,28 @@ export default class LevelManager {
             null,
             context
         );
+    }
+
+    updateCheckpointByHeight(playerY) {
+        let newestCheckpoint = null;
+
+        for (const checkpoint of this.checkpointList) {
+            if (!checkpoint.activated && playerY <= checkpoint.y) {
+                checkpoint.activated = true;
+                newestCheckpoint = checkpoint;
+            }
+        }
+
+        if (newestCheckpoint) {
+            this.currentCheckpoint = {
+                x: newestCheckpoint.x,
+                y: newestCheckpoint.y,
+            };
+
+            console.log("Checkpoint reached:", newestCheckpoint.id);
+            return newestCheckpoint;
+        }
+
+        return null;
     }
 }

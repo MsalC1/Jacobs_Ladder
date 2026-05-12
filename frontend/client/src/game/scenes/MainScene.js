@@ -93,7 +93,7 @@ export default class MainScene extends Phaser.Scene  {
         // LEVEL BACKGROUND CREATION
         const bg = this.add.image(400, 2150, "HELL");
         bg.setDisplaySize(800, 4320);
-        bg.setDepth(-10);
+        bg.setDepth(-15);
         
         this.createPlayerAnimations();
 
@@ -286,6 +286,8 @@ export default class MainScene extends Phaser.Scene  {
             this.playerController.update(time, delta);
             this.jumpMeter.update(time, delta);
         }
+
+        this.levelManager.updateCheckpointByHeight(this.player.sprite.y);
 
         this.updatePlayerSFX();
 
@@ -510,7 +512,7 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     respawnPlayer() {
-        const spawn = this.levelManager.spawnPoint;
+        const spawn = this.levelManager.currentCheckpoint || this.levelManager.spawnPoint;
         
         this.playerLives = 3;
         this.livesText.setText(`Lives: ${this.playerLives}`);

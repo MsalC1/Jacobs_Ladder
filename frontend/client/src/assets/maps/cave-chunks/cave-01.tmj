@@ -12,22 +12,22 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 1610612775, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":27,
@@ -50,7 +50,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 29, 24, 0, 0,
-            0, 0, 23, 39, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
+            0, 0, 23, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
             0, 0, 23, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
             0, 0, 23, 0, 0, 0, 0, 24, 0, 0, 0, 1610612768, 0, 2684354592, 0, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
             0, 0, 23, 0, 0, 0, 0, 24, 0, 0, 1610612768, 0, 0, 0, 2684354592, 0, 0, 23, 0, 0, 0, 0, 24, 0, 0,
@@ -427,190 +427,6 @@
                  "y":449.583333333333
                 }, 
                 {
-                 "height":0,
-                 "id":33,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-31.875,
-                         "y":33.5
-                        }, 
-                        {
-                         "x":-0.25,
-                         "y":33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":-300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":383.875,
-                 "y":351.5
-                }, 
-                {
-                 "height":0,
-                 "id":34,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":31.875,
-                         "y":33.5
-                        }, 
-                        {
-                         "x":0.25,
-                         "y":33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":-300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":416.125,
-                 "y":351
-                }, 
-                {
-                 "height":0,
-                 "id":35,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":-0.25,
-                         "y":-33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":383.818181818182,
-                 "y":449.772727272727
-                }, 
-                {
-                 "height":0,
-                 "id":36,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":0.25,
-                         "y":-33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":417.488636363636,
-                 "y":450.590909090909
-                }, 
-                {
                  "height":31.5,
                  "id":37,
                  "name":"spike-hitbox",
@@ -741,190 +557,6 @@
                  "width":31.3336,
                  "x":385.33285,
                  "y":128.75
-                }, 
-                {
-                 "height":0,
-                 "id":41,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-31.875,
-                         "y":33.5
-                        }, 
-                        {
-                         "x":-0.25,
-                         "y":33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":-300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":383.87485,
-                 "y":30.667
-                }, 
-                {
-                 "height":0,
-                 "id":42,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":31.875,
-                         "y":33.5
-                        }, 
-                        {
-                         "x":0.25,
-                         "y":33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":-300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":416.12485,
-                 "y":30.167
-                }, 
-                {
-                 "height":0,
-                 "id":43,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":-0.25,
-                         "y":-33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":383.81785,
-                 "y":128.94
-                }, 
-                {
-                 "height":0,
-                 "id":44,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":0.25,
-                         "y":-33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":417.48885,
-                 "y":129.758
                 }, 
                 {
                  "height":31.5,
@@ -1059,23 +691,76 @@
                  "y":769.25
                 }, 
                 {
-                 "height":0,
-                 "id":49,
+                 "height":24.875,
+                 "id":56,
                  "name":"spike-hitbox",
                  "opacity":1,
-                 "polygon":[
+                 "properties":[
                         {
-                         "x":0,
-                         "y":0
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
                         }, 
                         {
-                         "x":-31.875,
-                         "y":33.5
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
                         }, 
                         {
-                         "x":-0.25,
-                         "y":33.25
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
                         }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":358.4582,
+                 "y":417.25
+                }, 
+                {
+                 "height":24.875,
+                 "id":57,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":415.8332,
+                 "y":417.4375
+                }, 
+                {
+                 "height":24.5,
+                 "id":59,
+                 "name":"spike-hitbox",
+                 "opacity":1,
                  "properties":[
                         {
                          "name":"damage",
@@ -1100,29 +785,247 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":0,
-                 "x":383.37485,
-                 "y":671.167
+                 "width":27.8336,
+                 "x":356.5832,
+                 "y":359.5
+                }, 
+                {
+                 "height":24.5,
+                 "id":60,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":27.8336,
+                 "x":416.5832,
+                 "y":359.875
+                }, 
+                {
+                 "height":24.875,
+                 "id":65,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":357.9582,
+                 "y":735.8435
+                }, 
+                {
+                 "height":24.875,
+                 "id":66,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":415.3332,
+                 "y":736.0315
+                }, 
+                {
+                 "height":24.5,
+                 "id":67,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":27.8336,
+                 "x":356.0832,
+                 "y":678.0935
+                }, 
+                {
+                 "height":24.5,
+                 "id":68,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":-300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":27.8336,
+                 "x":416.0832,
+                 "y":678.4685
+                }, 
+                {
+                 "height":24.875,
+                 "id":73,
+                 "name":"spike-hitbox",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":358.4582,
+                 "y":97.343
                 },
             
                 {
-                 "height":0,
-                 "id":50,
+                 "height":24.875,
+                 "id":74,
                  "name":"spike-hitbox",
                  "opacity":1,
-                 "polygon":[
+                 "properties":[
                         {
-                         "x":0,
-                         "y":0
+                         "name":"damage",
+                         "type":"int",
+                         "value":1
                         }, 
                         {
-                         "x":31.875,
-                         "y":33.5
+                         "name":"knockbackX",
+                         "type":"int",
+                         "value":200
                         }, 
                         {
-                         "x":0.25,
-                         "y":33.25
+                         "name":"knockbackY",
+                         "type":"int",
+                         "value":300
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"spike"
                         }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":26.0836,
+                 "x":415.8332,
+                 "y":97.532
+                }, 
+                {
+                 "height":24.5,
+                 "id":75,
+                 "name":"spike-hitbox",
+                 "opacity":1,
                  "properties":[
                         {
                          "name":"damage",
@@ -1147,28 +1050,15 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":0,
-                 "x":415.62485,
-                 "y":670.667
+                 "width":27.8336,
+                 "x":356.5832,
+                 "y":39.593
                 }, 
                 {
-                 "height":0,
-                 "id":51,
+                 "height":24.5,
+                 "id":76,
                  "name":"spike-hitbox",
                  "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":-31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":-0.25,
-                         "y":-33.25
-                        }],
                  "properties":[
                         {
                          "name":"damage",
@@ -1183,7 +1073,7 @@
                         {
                          "name":"knockbackY",
                          "type":"int",
-                         "value":300
+                         "value":-300
                         }, 
                         {
                          "name":"type",
@@ -1193,55 +1083,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":0,
-                 "x":383.31785,
-                 "y":769.44
-                }, 
-                {
-                 "height":0,
-                 "id":52,
-                 "name":"spike-hitbox",
-                 "opacity":1,
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":31.875,
-                         "y":-33.5
-                        }, 
-                        {
-                         "x":0.25,
-                         "y":-33.25
-                        }],
-                 "properties":[
-                        {
-                         "name":"damage",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"knockbackX",
-                         "type":"int",
-                         "value":200
-                        }, 
-                        {
-                         "name":"knockbackY",
-                         "type":"int",
-                         "value":300
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":416.98885,
-                 "y":770.258
+                 "width":27.8336,
+                 "x":416.5832,
+                 "y":39.968
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1283,7 +1127,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":53,
+ "nextobjectid":77,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

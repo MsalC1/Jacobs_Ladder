@@ -145,12 +145,13 @@ function GamePage(){
 
         const savedToken = localStorage.getItem("token");
         const savedNickname = localStorage.getItem("nickname");
-
+        
         navigate("/lobby", {
             state:
             {
                 nickname: nickname || savedNickname,
                 token: savedToken,
+                URL: URL,
             },
         });
     }
