@@ -5,7 +5,7 @@ function LoginPage() {
     const [formData, setFormData] = useState({username: '', password: ''});
     const [errors, setErrors] = useState({}); 
     const [serverError, setServerError] = useState('');
-    const [URL] = useState('http://localhost:5000') // MAIN URL, SEND TO ALL OTHER PAGES
+    const [URL] = useState('https://game-backend-cagb.onrender.com') // MAIN URL, SEND TO ALL OTHER PAGES
     // prod URL: https://game-backend-cagb.onrender.com
     const navigate = useNavigate();
 
