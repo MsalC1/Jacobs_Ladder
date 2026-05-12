@@ -20,6 +20,20 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     preload(){
+
+        const loadingText = this.add.text(400, 475, "Loading... 0%", {
+            fontSize: "28px",
+            color: "#ffffff",
+            fontFamily: "monospace",
+        }).setOrigin(0.5);
+
+        this.load.on("progress", (value) => {
+            loadingText.setText(`Loading... ${Math.floor(value * 100)}%`);
+        });
+
+        this.load.on("complete", () => {
+            loadingText.destroy();
+        });
         // PLAYER ASSETS
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right2.PNG", import.meta.url).href;
         const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left2.PNG", import.meta.url).href;
@@ -79,8 +93,8 @@ export default class MainScene extends Phaser.Scene  {
         // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
-        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeigh: 280});
-        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeigh: 280});
+        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeight: 280});
+        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeight: 280});
 
 
         // BACKGROUND MUSIC
