@@ -79,8 +79,13 @@ export default class MainScene extends Phaser.Scene  {
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
 
         // BACKGROUND MUSIC
-        const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
-        this.load.audio("game-theme", gameTheme);
+        const hellTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
+        const caveTheme = new URL("../../assets/music/cave.ogg", import.meta.url).href;
+        const oceanTheme = new URL("../../assets/music/underwater.ogg", import.meta.url).href;
+
+        this.load.audio("hell-theme", hellTheme);
+        this.load.audio("cave-theme", caveTheme);
+        this.load.audio("ocean-theme", oceanTheme);
     }
 
     create(){
@@ -95,15 +100,6 @@ export default class MainScene extends Phaser.Scene  {
         const FALL_VOL = 0.3;
         const HURT_VOL = 0.2;
 
-        // LEVEL BACKGROUND CREATION
-        const bgHell = this.add.image(400, 2150*3, "HELL");
-        bgHell.setDisplaySize(800, 4320);
-        bgHell.setDepth(-10);
-
-        const bgCave = this.add.image(400, 2150, "CAVE");
-        bgCave.setDisplaySize(800, 4320);
-        bgCave.setDepth(-10);
-        
         this.createPlayerAnimations();
 
         // LEVEL CREATION
@@ -111,6 +107,10 @@ export default class MainScene extends Phaser.Scene  {
         this.levelManager.create();
 
         const spawn = this.levelManager.spawnPoint;
+
+        // LEVEL BACKGROUND CREATION
+        
+        this.createBackgrounds();
 
         // PLAYER CREATION
         this.player             = new Player(this, spawn.x, spawn.y);
@@ -158,8 +158,14 @@ export default class MainScene extends Phaser.Scene  {
 
         // GET THE MUSIC TO THE GAME REGRESTRY TO COMMUNICATE WITH REACT
         this.game.registry.set("setMusicVolume", (volume) => {
-            if (this.backgroundMusic) {
-                this.backgroundMusic.setVolume(volume);
+            this.musicVolume = volume;
+
+            if (!this.backgroundMusic) return;
+
+            const currentMusic = this.backgroundMusic[this.currentMusicKey];
+
+            if (currentMusic) {
+                currentMusic.setVolume(volume);
             }
         });
 
@@ -235,20 +241,36 @@ export default class MainScene extends Phaser.Scene  {
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         // MUSIC CREATION
-        this.backgroundMusic = this.sound.add("game-theme", {
-            loop: true,
-            volume: 0.4,
-        });
+        this.musicVolume = 0.4;
+        this.currentMusicKey = "HELL";
 
-        this.backgroundMusic.play();
+        this.backgroundMusic = {
+            HELL: this.sound.add("hell-theme", {
+                loop: true,
+                volume: this.musicVolume,
+            }),
+
+            CAVE: this.sound.add("cave-theme", {
+                loop: true,
+                volume: 0,
+            }),
+
+            OCEAN: this.sound.add("ocean-theme", {
+                loop: true,
+                volume: 0,
+            })
+        };
+
+        this.backgroundMusic.HELL.play();
 
         this.events.once("shutdown", () => {
             if (this.backgroundMusic) {
-                this.backgroundMusic.stop();
-                this.backgroundMusic.destroy();
+                for (const music of Object.values(this.backgroundMusic)) {
+                    music.stop();
+                    music.destroy();
+                }
             }
         });
-
         // PAUSE LOGIC
         this.localPaused = false;
 
@@ -297,6 +319,8 @@ export default class MainScene extends Phaser.Scene  {
         }
 
         this.levelManager.updateCheckpointByHeight(this.player.sprite.y);
+
+        this.updateBackgroundByHeight();
 
         this.updatePlayerSFX();
 
@@ -632,6 +656,113 @@ export default class MainScene extends Phaser.Scene  {
             deathCount: this.deathCount,
             jumpsMade: this.jumpsMade,
             timeCompleted: didIWin ? formattedTime : null,
+        });
+    }
+
+    transitionBackground(nextKey) {
+        if (!this.backgrounds) return;
+        if (this.currentBackgroundKey === nextKey) return;
+
+        const oldBg = this.backgrounds[this.currentBackgroundKey];
+        const newBg = this.backgrounds[nextKey];
+
+        if (!newBg) return;
+
+        this.currentBackgroundKey = nextKey;
+
+        newBg.setAlpha(0);
+        newBg.setVisible(true);
+
+        this.tweens.add({
+            targets: oldBg,
+            alpha: 0,
+            duration: 1200,
+            ease: "Sine.easeInOut",
+        });
+
+        this.tweens.add({
+            targets: newBg,
+            alpha: 1,
+            duration: 1200,
+            ease: "Sine.easeInOut"
+        });
+
+        this.transitionMusic(nextKey);
+    }
+
+    updateBackgroundByHeight() {
+        if (!this.levelManager || !this.player) return;
+
+        const playerY = this.player.sprite.y;
+
+        const chunksPerStage = 5;
+        const caveStartY = this.levelManager.levelHeight - this.levelManager.chunkHeight * chunksPerStage;
+
+        if (playerY <= caveStartY) {
+            this.transitionBackground("CAVE");
+        } else {
+            this.transitionBackground("HELL");
+        }
+    }
+
+    createBackgrounds() {
+        // LEVEL BACKGROUND CREATION
+        this.currentBackgroundKey = "HELL";
+
+        const centerX = this.levelManager.levelWidth / 2;
+        const centerY = this.levelManager.levelHeight / 2;
+
+        this.backgrounds = {
+            HELL: this.add.image(centerX, centerY, "HELL"),
+            CAVE: this.add.image(centerX, centerY, "CAVE"),
+        };
+
+        for (const bg of Object.values(this.backgrounds)) {
+            bg.setOrigin(0.5, 1.1);
+
+            const scale = this.levelManager.levelWidth / bg.width;
+            bg.setScale(scale);
+
+            bg.setScrollFactor(0.35);
+            bg.setDepth(-50);
+            bg.setAlpha(0);
+        }
+        
+        this.backgrounds.HELL.setAlpha(1);
+    }
+
+    transitionMusic(nextKey) {
+        if (!this.backgroundMusic) return;
+        if (this.currentMusicKey === nextKey) return;
+
+        const oldMusic = this.backgroundMusic[this.currentMusicKey];
+        const newMusic = this.backgroundMusic[nextKey];
+
+        if (!oldMusic || !newMusic) return;
+
+        this.currentMusicKey = nextKey;
+
+        if (!newMusic.isPlaying) {
+            newMusic.setVolume(0);
+            newMusic.play();
+        }
+
+        this.tweens.add({
+            targets: oldMusic,
+            volume: 0,
+            duration: 1200,
+            ease: "Sine.easeInOut",
+            onComplete: () => {
+                oldMusic.stop();
+            },
+        });
+
+        // Fade in new music
+        this.tweens.add({
+            targets: newMusic,
+            volume: this.musicVolume,
+            duration: 1200,
+            ease: "Sine.easeInOut",
         });
     }
 }
