@@ -21,8 +21,10 @@ export default class MainScene extends Phaser.Scene  {
 
     preload(){
         // PLAYER ASSETS
-        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right.png", import.meta.url).href;
-        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left.png", import.meta.url).href;
+        const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right2.PNG", import.meta.url).href;
+        const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left2.PNG", import.meta.url).href;
+        const playerRightJump = new URL("../../assets/PlayerCharacter/spritesheets/Character_jump_right.png", import.meta.url).href;
+        const playerLeftJump = new URL("../../assets/PlayerCharacter/spritesheets/Character_jump_left.png", import.meta.url).href;
 
         const jumpBar       = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
         const jumpBarBg     = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
@@ -47,6 +49,7 @@ export default class MainScene extends Phaser.Scene  {
         const castle_image_path         = new URL("../../assets/tilesets/castles-tileset.png", import.meta.url).href;
         const dungeon_crawl_image_path  = new URL("../../assets/tilesets/dungeon-tileset.png", import.meta.url).href;
         const hell_image_path           = new URL("../../assets/tilesets/hell-tileset.png", import.meta.url).href;
+        const ocean_image_path          = new URL("../../assets/tilesets/ocean-tileset.png", import.meta.url).href;
 
 
         // GAME SEED CHUNK GENERATION
@@ -58,24 +61,36 @@ export default class MainScene extends Phaser.Scene  {
             this.load.tilemapTiledJSON(chunk.key, chunk.path);
         }
 
-        // console.log("Room seed:", roomCode);
-        // console.log("Chunk order:", this.hellStageChunks.map((chunk) => chunk.key));
 
         this.load.image("castle-tiles", castle_image_path);
         this.load.image("decor-tiles", dungeon_crawl_image_path);
         this.load.image("hell-tiles", hell_image_path);
+        this.load.image("ocean-tiles", ocean_image_path);
 
         // BACKGROUND
-        const background = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
-        this.load.image("HELL", background);
+        const hellBackground = new URL("../../assets/Locations/HELL.PNG", import.meta.url).href;
+        const caveBackground = new URL("../../assets/Locations/CAVE.jpg", import.meta.url).href;
+        const oceanBackground = new URL("../../assets/Locations/OCEAN.jpg", import.meta.url).href;
+
+        this.load.image("HELL", hellBackground);
+        this.load.image("CAVE", caveBackground);
+        this.load.image("OCEAN", oceanBackground);
 
         // PLAYER ANIMATIONS
-        this.load.spritesheet('player-right', playerRight, { frameWidth: 256, frameHeight: 256 });
-        this.load.spritesheet('player-left', playerLeft, { frameWidth: 256, frameHeight: 256 });
+        this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
+        this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
+        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeigh: 280});
+        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeigh: 280});
+
 
         // BACKGROUND MUSIC
-        const gameTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
-        this.load.audio("game-theme", gameTheme);
+        const hellTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
+        const caveTheme = new URL("../../assets/music/cave.ogg", import.meta.url).href;
+        const oceanTheme = new URL("../../assets/music/underwater.ogg", import.meta.url).href;
+
+        this.load.audio("hell-theme", hellTheme);
+        this.load.audio("cave-theme", caveTheme);
+        this.load.audio("ocean-theme", oceanTheme);
     }
 
     create(){
@@ -90,11 +105,6 @@ export default class MainScene extends Phaser.Scene  {
         const FALL_VOL = 0.3;
         const HURT_VOL = 0.2;
 
-        // LEVEL BACKGROUND CREATION
-        const bg = this.add.image(400, 2150, "HELL");
-        bg.setDisplaySize(800, 4320);
-        bg.setDepth(-10);
-        
         this.createPlayerAnimations();
 
         // LEVEL CREATION
@@ -102,6 +112,10 @@ export default class MainScene extends Phaser.Scene  {
         this.levelManager.create();
 
         const spawn = this.levelManager.spawnPoint;
+
+        // LEVEL BACKGROUND CREATION
+        
+        this.createBackgrounds();
 
         // PLAYER CREATION
         this.player             = new Player(this, spawn.x, spawn.y);
@@ -149,8 +163,14 @@ export default class MainScene extends Phaser.Scene  {
 
         // GET THE MUSIC TO THE GAME REGRESTRY TO COMMUNICATE WITH REACT
         this.game.registry.set("setMusicVolume", (volume) => {
-            if (this.backgroundMusic) {
-                this.backgroundMusic.setVolume(volume);
+            this.musicVolume = volume;
+
+            if (!this.backgroundMusic) return;
+
+            const currentMusic = this.backgroundMusic[this.currentMusicKey];
+
+            if (currentMusic) {
+                currentMusic.setVolume(volume);
             }
         });
 
@@ -171,10 +191,23 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 4,
+            fontFamily: "monospace"
         });
 
         this.livesText.setScrollFactor(0);
         this.livesText.setDepth(100);
+
+        // HEIGHT METER UI:
+        this.heightText = this.add.text(20, 55, "Height 0m", {
+            fontSize: "20px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 4,
+            fontFamily: "monospace"
+        });
+
+        this.heightText.setScrollFactor(0);
+        this.heightText.setDepth(100);
 
         // RESPAWN STATE
         this.isRespawning = false;
@@ -184,6 +217,7 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 6,
+            fontFamily: "monospace"
         });
 
         this.respawnText.setOrigin(0.5);
@@ -226,20 +260,36 @@ export default class MainScene extends Phaser.Scene  {
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         // MUSIC CREATION
-        this.backgroundMusic = this.sound.add("game-theme", {
-            loop: true,
-            volume: 0.4,
-        });
+        this.musicVolume = 0.4;
+        this.currentMusicKey = "HELL";
 
-        this.backgroundMusic.play();
+        this.backgroundMusic = {
+            HELL: this.sound.add("hell-theme", {
+                loop: true,
+                volume: this.musicVolume,
+            }),
+
+            CAVE: this.sound.add("cave-theme", {
+                loop: true,
+                volume: 0,
+            }),
+
+            OCEAN: this.sound.add("ocean-theme", {
+                loop: true,
+                volume: 0,
+            })
+        };
+
+        this.backgroundMusic.HELL.play();
 
         this.events.once("shutdown", () => {
             if (this.backgroundMusic) {
-                this.backgroundMusic.stop();
-                this.backgroundMusic.destroy();
+                for (const music of Object.values(this.backgroundMusic)) {
+                    music.stop();
+                    music.destroy();
+                }
             }
         });
-
         // PAUSE LOGIC
         this.localPaused = false;
 
@@ -286,6 +336,12 @@ export default class MainScene extends Phaser.Scene  {
             this.playerController.update(time, delta);
             this.jumpMeter.update(time, delta);
         }
+
+        this.levelManager.updateCheckpointByHeight(this.player.sprite.y);
+
+        this.updateMusicByHeight();
+
+        this.updateHeightMeter();
 
         this.updatePlayerSFX();
 
@@ -362,6 +418,18 @@ export default class MainScene extends Phaser.Scene  {
             key: 'walk-right',
             frames: this.anims.generateFrameNumbers('player-right', { start: 0, end: 6 }),
             frameRate: 12,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'jump-right',
+            frames: this.anims.generateFrameNumbers('player-right-jump', { start: 0, end: 6 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'jump-left',
+            frames: this.anims.generateFrameNumbers('player-left-jump', {start: 0, end: 6}),
+            frameRate: 5,
             repeat: -1
         });
         this.anims.create({
@@ -447,8 +515,6 @@ export default class MainScene extends Phaser.Scene  {
 
         if (message.targetPlayerId !== myPlayerId) return;
 
-        // console.log("You have been pushed!");
-
         this.player.sprite.setVelocityX(message.direction * message.forceX);
         this.player.sprite.setVelocityY(message.forceY);
     }
@@ -510,7 +576,7 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     respawnPlayer() {
-        const spawn = this.levelManager.spawnPoint;
+        const spawn = this.levelManager.currentCheckpoint || this.levelManager.spawnPoint;
         
         this.playerLives = 3;
         this.livesText.setText(`Lives: ${this.playerLives}`);
@@ -553,25 +619,25 @@ export default class MainScene extends Phaser.Scene  {
     }
 
     reachGoal(playerSprite, goal) {
-        // if (this.gameEnded) return;
+        if (this.gameEnded) return;
 
-        // this.gameWon = true;
-        // this.gameEnded = true;
+        this.gameWon = true;
+        this.gameEnded = true;
 
-        // this.player.sprite.setVelocity(0, 0);
-        // this.player.sprite.body.enable = false;
+        this.player.sprite.setVelocity(0, 0);
+        this.player.sprite.body.enable = false;
 
-        // this.playerSounds.walk?.stop();
-        // this.playerSounds.fall?.stop();
+        this.playerSounds.walk?.stop();
+        this.playerSounds.fall?.stop();
 
-        // const myName = this.game.registry.get("nickname");
+        const myName = this.game.registry.get("nickname");
 
-        // // send a signal to p2pmanager
-        // this.networkManager?.winGame?.();
+        // send a signal to p2pmanager
+        this.networkManager?.winGame?.();
 
-        // this.showEndStats(true, myName);
+        this.showEndStats(true, myName);
 
-        console.log("reached goal");
+        // console.log("reached goal");
     }
 
     handleGameEnd(message) {
@@ -592,14 +658,6 @@ export default class MainScene extends Phaser.Scene  {
         this.playerSounds.walk?.stop();
         this.playerSounds.fall?.stop();
         
-        // this.add.text(400, 475, didIWin ? "YOU WIN!" : `${winner} won!`, {
-        //     fontSize: didIWin ? "56px" : "42px",
-        //     color: "#ffffff",
-        //     stroke: "#000000",
-        //     strokeThickness: 8,
-        //     fontFamily: "Connection",
-        //     align: "center",
-        // }).setOrigin(0.5) .setScrollFactor(0) .setDepth(500);
 
         this.showEndStats(didIWin, winner);
     }
@@ -622,5 +680,185 @@ export default class MainScene extends Phaser.Scene  {
             jumpsMade: this.jumpsMade,
             timeCompleted: didIWin ? formattedTime : null,
         });
+    }
+
+    transitionBackground(nextKey) {
+        if (!this.backgrounds) return;
+        if (this.currentBackgroundKey === nextKey) return;
+
+        const oldBg = this.backgrounds[this.currentBackgroundKey];
+        const newBg = this.backgrounds[nextKey];
+
+        if (!newBg) return;
+
+        this.currentBackgroundKey = nextKey;
+
+        newBg.setAlpha(0);
+        newBg.setVisible(true);
+
+        this.tweens.add({
+            targets: oldBg,
+            alpha: 0,
+            duration: 1200,
+            ease: "Sine.easeInOut",
+        });
+
+        this.tweens.add({
+            targets: newBg,
+            alpha: 1,
+            duration: 1200,
+            ease: "Sine.easeInOut"
+        });
+
+        this.transitionMusic(nextKey);
+    }
+
+    updateMusicByHeight() {
+        if (!this.levelManager || !this.player) return;
+
+        const playerY = this.player.sprite.y;
+
+        const chunksPerStage = 5;
+        const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+        const caveStartY = this.levelManager.levelHeight - stageHeight;
+        const oceanStartY = this.levelManager.levelHeight - stageHeight * 2;
+
+        if (playerY <= oceanStartY) {
+        this.transitionMusic("OCEAN");
+        } else if (playerY <= caveStartY) {
+            this.transitionMusic("CAVE");
+        } else {
+            this.transitionMusic("HELL");
+        }
+    }
+
+    // createBackgrounds() {
+    //     // LEVEL BACKGROUND CREATION
+    //     this.currentBackgroundKey = "HELL";
+
+    //     const centerX = this.levelManager.levelWidth / 2;
+
+    //     const chunksPerStage = 5;
+    //     const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+    //     const hellBottomY = this.levelManager.levelHeight;
+    //     const caveBottomY = this.levelManager.levelHeight - stageHeight;
+    //     const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
+
+    //     this.backgrounds = {
+    //         HELL: this.add.image(centerX, hellBottomY, "HELL"),
+    //         CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+    //         OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN")
+    //     };
+
+    //     for (const bg of Object.values(this.backgrounds)) {
+    //         bg.setOrigin(0.5, 1);
+
+    //         const scaleX = this.levelManager.levelWidth / bg.width;
+    //         const scaleY = stageHeight / bg.height;
+    //         const scale = Math.max(scaleX, scaleY);
+
+    //         bg.setScale(scale);
+
+    //         bg.setScrollFactor(1);
+
+    //         bg.setDepth(-50);
+    //         bg.setAlpha(0);
+    //     }
+        
+    //     this.backgrounds.HELL.setAlpha(1);
+    // }
+
+    createBackgrounds() {
+        this.currentBackgroundKey = "HELL";
+
+        const centerX = this.levelManager.levelWidth / 2;
+
+        const chunksPerStage = 5;
+        const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+        const hellBottomY = this.levelManager.levelHeight;
+        const caveBottomY = this.levelManager.levelHeight - stageHeight;
+        const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
+
+        this.backgrounds = {
+            HELL: this.add.image(centerX, hellBottomY, "HELL"),
+            CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+            OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN"),
+        };
+
+        for (const bg of Object.values(this.backgrounds)) {
+            bg.setOrigin(0.5, 1);
+
+            const scaleX = this.levelManager.levelWidth / bg.width;
+            const scaleY = stageHeight / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+
+            bg.setScale(scale);
+            bg.setScrollFactor(1);
+            bg.setDepth(-50);
+
+            // Always visible
+            bg.setAlpha(1);
+        }
+    }
+
+    transitionMusic(nextKey) {
+        if (!this.backgroundMusic) return;
+        if (this.currentMusicKey === nextKey) return;
+
+        const oldKey = this.currentMusicKey;
+        const oldMusic = this.backgroundMusic[oldKey];
+        const newMusic = this.backgroundMusic[nextKey];
+
+        if (!oldMusic || !newMusic) return;
+
+        // kill previous tweens so volume transitions do not stack weirdly
+        this.tweens.killTweensOf(oldMusic);
+        this.tweens.killTweensOf(newMusic);
+
+        this.currentMusicKey = nextKey;
+
+        if (!newMusic.isPlaying) {
+            newMusic.setVolume(0);
+            newMusic.play();
+        }
+
+        this.tweens.add({
+            targets: oldMusic,
+            volume: 0,
+            duration: 1200,
+            ease: "Sine.easeInOut",
+            onComplete: () => {
+                // only stop if it did not become active again during the transition
+                if (this.currentMusicKey !== oldKey) {
+                    oldMusic.stop();
+                }
+            },
+        });
+
+        this.tweens.add({
+            targets: newMusic,
+            volume: this.musicVolume,
+            duration: 1200,
+            ease: "Sine.easeInOut",
+        });
+    }
+
+    updateHeightMeter() {
+        if (!this.player || !this.levelManager || !this.heightText) return;
+
+        const playerY = this.player.sprite.y;
+        const levelHeight = this.levelManager.levelHeight;
+
+        const heightPx = levelHeight - playerY;
+
+        const heightMeters = Math.max(0, Math.floor(heightPx / 10));
+
+        const progress = Phaser.Math.Clamp(heightPx / levelHeight, 0, 1);
+        const percent = Math.floor(progress * 100);
+
+        this.heightText.setText(`Height: ${heightMeters}m ${percent}%`);
     }
 }

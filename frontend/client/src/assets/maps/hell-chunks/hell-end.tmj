@@ -325,25 +325,7 @@
          "draworder":"topdown",
          "id":8,
          "name":"Goal",
-         "objects":[
-                {
-                 "height":98.6666666666667,
-                 "id":6,
-                 "name":"goal",
-                 "opacity":1,
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"goal"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":798,
-                 "x":0.666666666666629,
-                 "y":-0.666666666666686
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -360,7 +342,7 @@
         {
          "columns":10,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/Downloads\/hell-tileset.png",
+         "image":"..\/..\/tilesets\/hell-tileset.png",
          "imageheight":192,
          "imagewidth":320,
          "margin":0,
@@ -373,7 +355,7 @@
         {
          "columns":8,
          "firstgid":61,
-         "image":"..\/..\/..\/..\/Downloads\/CastleTiles.png",
+         "image":"..\/..\/tilesets\/castles-tileset.png",
          "imageheight":224,
          "imagewidth":256,
          "margin":0,
@@ -386,13 +368,26 @@
         {
          "columns":64,
          "firstgid":117,
-         "image":"..\/..\/..\/..\/Downloads\/DungeonCrawl_ProjectUtumnoTileset.png",
+         "image":"..\/..\/tilesets\/dungeon-tileset.png",
          "imageheight":1536,
          "imagewidth":2048,
          "margin":0,
          "name":"hazards-tileset",
          "spacing":0,
          "tilecount":3072,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":12,
+         "firstgid":3189,
+         "image":"..\/..\/tilesets\/ocean-tileset.png",
+         "imageheight":576,
+         "imagewidth":384,
+         "margin":0,
+         "name":"ocean-tileset",
+         "spacing":0,
+         "tilecount":216,
          "tileheight":32,
          "tilewidth":32
         }],

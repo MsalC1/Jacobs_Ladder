@@ -18,6 +18,8 @@ export default class PlayerController {
         } else if (this.keys.D.isDown) {
             this.player.setVelocityX(this.speed);
             this.player.playWalkRight();
+
+
         } else {
             body.velocity.x *= this.friction;
 
@@ -27,8 +29,10 @@ export default class PlayerController {
             this.player.playIdle();
         }
 
-        if (this.keys.W.isDown) {
-            this.player.setVelocityY(-1000);
-        }
+
+
+        // if (this.keys.W.isDown) {
+        //     this.player.setVelocityY(-1000);
+        // }
     }
 }

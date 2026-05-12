@@ -63,10 +63,39 @@
          "y":0
         }, 
         {
+         "color":"#55ff00",
          "draworder":"topdown",
          "id":7,
          "name":"Checkpoints",
-         "objects":[],
+         "objects":[
+                {
+                 "height":21,
+                 "id":10,
+                 "name":"checkpoint",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"string",
+                         "value":"cave-checkpoint"
+                        }, 
+                        {
+                         "name":"order",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"checkpoint"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":21,
+                 "x":132.583333333333,
+                 "y":709.25
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -464,7 +493,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":9,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
@@ -506,6 +535,19 @@
          "name":"hell-tileset",
          "spacing":0,
          "tilecount":60,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":12,
+         "firstgid":3189,
+         "image":"..\/..\/tilesets\/ocean-tileset.png",
+         "imageheight":576,
+         "imagewidth":384,
+         "margin":0,
+         "name":"ocean-tileset",
+         "spacing":0,
+         "tilecount":216,
          "tileheight":32,
          "tilewidth":32
         }],

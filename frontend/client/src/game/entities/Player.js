@@ -1,14 +1,14 @@
 export default class Player {
     constructor(scene, x, y) {
-        const WIDTH_PX    = 256;
-        const HEIGHT_PX   = 256;
+        const WIDTH_PX    = 191;
+        const HEIGHT_PX   = 280;
 
-        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.25;  // 64px
-        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.25; // 64px
+        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.30;  // 64px
+        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.30; // 64px
 
         const HITBOX_WIDTH_PX     = WIDTH_PX * 0.25;   // 75px
-        const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.7;   // 410px
-        const HITBOX_OFFSET_X_PX  = SPRITE_WIDTH_PX * 1.5;     // 220px
+        const HITBOX_HEIGHT_PX    = HEIGHT_PX * 0.45;   // 410px
+        const HITBOX_OFFSET_X_PX  = SPRITE_WIDTH_PX * 1;     // 220px
         const HITBOX_OFFSET_Y_PX  = SPRITE_HEIGHT_PX * 1.15;    // 100px
 
         this.scene = scene;
@@ -73,6 +73,29 @@ export default class Player {
 
         this.sprite.anims.play("walk-right", true);
     }
+
+    playJumpRight(){
+        this.direction = "right";
+
+        if (this.sprite.texture.key !== "player-right-jump"){
+            this.sprite.setTexture("player-right-jump");
+        }
+
+        this.sprite.anims.play("jump-right", true);
+    }
+
+    playJumpLeft() {
+        this.direction = "left";
+
+        if (this.sprite.texture.key !== "player-left-jump"){
+            this.sprite.setTexture("player-left-jump");
+        }
+
+        this.sprite.anims.play("jump-left", true);
+
+    }
+
+
 
     playIdle() {
         const idleKey = this.direction === "left" ? "idle-left" : "idle-right"; // if facing left -> idle-left else -> idle-right

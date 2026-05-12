@@ -294,7 +294,7 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/Downloads\/CastleTiles.png",
+         "image":"..\/..\/tilesets\/castles-tileset.png",
          "imageheight":224,
          "imagewidth":256,
          "margin":0,
@@ -307,7 +307,7 @@
         {
          "columns":10,
          "firstgid":57,
-         "image":"..\/..\/..\/..\/Downloads\/hell-tileset.png",
+         "image":"..\/..\/tilesets\/hell-tileset.png",
          "imageheight":192,
          "imagewidth":320,
          "margin":0,
@@ -320,7 +320,7 @@
         {
          "columns":64,
          "firstgid":117,
-         "image":"..\/..\/..\/..\/Downloads\/DungeonCrawl_ProjectUtumnoTileset.png",
+         "image":"..\/..\/tilesets\/dungeon-tileset.png",
          "imageheight":1536,
          "imagewidth":2048,
          "margin":0,
@@ -339,7 +339,20 @@
          "margin":0,
          "name":"sewer-tileset",
          "spacing":0,
-         "tilecount":56,
+         "tilecount":0,
+         "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":12,
+         "firstgid":3189,
+         "image":"..\/..\/tilesets\/ocean-tileset.png",
+         "imageheight":576,
+         "imagewidth":384,
+         "margin":0,
+         "name":"ocean-tileset",
+         "spacing":0,
+         "tilecount":216,
          "tileheight":32,
          "tilewidth":32
         }],
