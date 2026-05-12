@@ -93,7 +93,7 @@ function LoginPage() {
     }
 
     return (
-
+        <div style={styles.page}>
         <div className="menu-card" style={styles.card}>
             <h1 style={styles.title}>Jacobs Ladder</h1>
 
@@ -141,13 +141,14 @@ function LoginPage() {
                 New to Jacobs Ladder? Sign Up!
             </button>
         </div>
+        </div>
     );
 }
 
 const styles = {
     page: {
         minHeight: "100vh",
-        // background: "#1a1a1a",
+        background: "#1a1a1a",
         color: "white",
         display: "flex",
         justifyContent: "center",

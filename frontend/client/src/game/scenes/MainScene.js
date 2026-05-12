@@ -186,10 +186,23 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 4,
+            fontFamily: "monospace"
         });
 
         this.livesText.setScrollFactor(0);
         this.livesText.setDepth(100);
+
+        // HEIGHT METER UI:
+        this.heightText = this.add.text(20, 55, "Height 0m", {
+            fontSize: "20px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 4,
+            fontFamily: "monospace"
+        });
+
+        this.heightText.setScrollFactor(0);
+        this.heightText.setDepth(100);
 
         // RESPAWN STATE
         this.isRespawning = false;
@@ -199,6 +212,7 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 6,
+            fontFamily: "monospace"
         });
 
         this.respawnText.setOrigin(0.5);
@@ -320,7 +334,9 @@ export default class MainScene extends Phaser.Scene  {
 
         this.levelManager.updateCheckpointByHeight(this.player.sprite.y);
 
-        this.updateBackgroundByHeight();
+        this.updateMusicByHeight();
+
+        this.updateHeightMeter();
 
         this.updatePlayerSFX();
 
@@ -680,7 +696,7 @@ export default class MainScene extends Phaser.Scene  {
         this.transitionMusic(nextKey);
     }
 
-    updateBackgroundByHeight() {
+    updateMusicByHeight() {
         if (!this.levelManager || !this.player) return;
 
         const playerY = this.player.sprite.y;
@@ -692,11 +708,11 @@ export default class MainScene extends Phaser.Scene  {
         const oceanStartY = this.levelManager.levelHeight - stageHeight * 2;
 
         if (playerY <= oceanStartY) {
-            this.transitionBackground("OCEAN");
+        this.transitionMusic("OCEAN");
         } else if (playerY <= caveStartY) {
-            this.transitionBackground("CAVE");
+            this.transitionMusic("CAVE");
         } else {
-            this.transitionBackground("HELL")
+            this.transitionMusic("HELL");
         }
     }
 
@@ -757,13 +773,18 @@ export default class MainScene extends Phaser.Scene  {
 
         for (const bg of Object.values(this.backgrounds)) {
             bg.setOrigin(0.5, 1);
-            bg.setDisplaySize(800, stageHeight);
+
+            const scaleX = this.levelManager.levelWidth / bg.width;
+            const scaleY = stageHeight / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+
+            bg.setScale(scale);
             bg.setScrollFactor(1);
             bg.setDepth(-50);
-            bg.setAlpha(0);
-        }
 
-        this.backgrounds.HELL.setAlpha(1);
+            // Always visible
+            bg.setAlpha(1);
+        }
     }
 
     transitionMusic(nextKey) {
@@ -806,5 +827,21 @@ export default class MainScene extends Phaser.Scene  {
             duration: 1200,
             ease: "Sine.easeInOut",
         });
+    }
+
+    updateHeightMeter() {
+        if (!this.player || !this.levelManager || !this.heightText) return;
+
+        const playerY = this.player.sprite.y;
+        const levelHeight = this.levelManager.levelHeight;
+
+        const heightPx = levelHeight - playerY;
+
+        const heightMeters = Math.max(0, Math.floor(heightPx / 10));
+
+        const progress = Phaser.Math.Clamp(heightPx / levelHeight, 0, 1);
+        const percent = Math.floor(progress * 100);
+
+        this.heightText.setText(`Height: ${heightMeters}m ${percent}%`);
     }
 }

@@ -97,7 +97,7 @@ function LobbyPage() {
     }, [token, navigate]);
 
     return (
-        
+        <div style={styles.page}>
         <div className="menu-card" style={styles.card}>
             <h1 style={{fontFamily: 'LadyRadical'}}>Lobby</h1>
             <p style={styles.playerName}>Player: {nickname || "Guest"}</p>
@@ -126,13 +126,14 @@ function LobbyPage() {
 
             <button onClick={handleLogout} style={styles.buttonL}>Log Out</button>
         </div>
+        </div>
     );
 }
 
 const styles = {
     page: {
         minHeight: "100vh",
-        // background: "#1a1a1a",
+        background: "#1a1a1a",
         color: "white",
         display: "flex",
         justifyContent: "center",
