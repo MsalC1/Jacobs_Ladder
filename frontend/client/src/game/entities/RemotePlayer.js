@@ -1,11 +1,16 @@
 export default class RemotePlayer {
     constructor(scene, x, y, nickname = "RemotePlayer") {
+        const WIDTH_PX    = 191;
+        const HEIGHT_PX   = 280;
+
+        const SPRITE_WIDTH_PX     = WIDTH_PX * 0.30;  // 64px
+        const SPRITE_HEIGHT_PX    = HEIGHT_PX * 0.30; // 64px
         this.scene = scene;
         this.nickname = nickname;
         this.direction = "right";
 
         this.sprite = scene.physics.add.sprite(x, y, "player-right");
-        this.sprite.setDisplaySize(64, 64);
+        this.sprite.setDisplaySize(SPRITE_WIDTH_PX, SPRITE_HEIGHT_PX);
         this.sprite.body.setAllowGravity(false);
         this.sprite.setDepth(10);
 
