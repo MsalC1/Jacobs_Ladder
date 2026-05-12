@@ -103,6 +103,7 @@ function SignUpPage() {
     }
 
     return (
+        <div style={styles.page}>
         <div className="menu-card" style={styles.card}>
             <h1 style={styles.title}>Jacobs Ladder</h1>
 
@@ -161,13 +162,14 @@ function SignUpPage() {
                 <button type="submit" style={styles.button}>Sign Up</button>
             </form>
         </div>
+        </div>
     );
 }
 
 const styles = {
     page: {
         minHeight: "100vh",
-        // background: "#1a1a1a",
+        background: "#1a1a1a",
         color: "white",
         display: "flex",
         justifyContent: "center",

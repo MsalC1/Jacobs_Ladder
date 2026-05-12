@@ -135,6 +135,7 @@ function RoomPage() {
     }
 
     return (
+            <div style={styles.page}>
             <div className="menu-card room-card">
                 <h1 className="room-title">Room</h1>
 
@@ -165,13 +166,14 @@ function RoomPage() {
                     Leave Room
                 </button>
             </div>
+            </div>
     );
 }
 
 const styles = {
     page: {
         minHeight: "100vh",
-        // background: "#1a1a1a",
+        background: "#1a1a1a",
         color: "white",
         display: "flex",
         justifyContent: "center",

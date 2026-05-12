@@ -191,10 +191,23 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 4,
+            fontFamily: "monospace"
         });
 
         this.livesText.setScrollFactor(0);
         this.livesText.setDepth(100);
+
+        // HEIGHT METER UI:
+        this.heightText = this.add.text(20, 55, "Height 0m", {
+            fontSize: "20px",
+            color: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 4,
+            fontFamily: "monospace"
+        });
+
+        this.heightText.setScrollFactor(0);
+        this.heightText.setDepth(100);
 
         // RESPAWN STATE
         this.isRespawning = false;
@@ -204,6 +217,7 @@ export default class MainScene extends Phaser.Scene  {
             color: "#ffffff",
             stroke: "#000000",
             strokeThickness: 6,
+            fontFamily: "monospace"
         });
 
         this.respawnText.setOrigin(0.5);
@@ -325,7 +339,9 @@ export default class MainScene extends Phaser.Scene  {
 
         this.levelManager.updateCheckpointByHeight(this.player.sprite.y);
 
-        this.updateBackgroundByHeight();
+        this.updateMusicByHeight();
+
+        this.updateHeightMeter();
 
         this.updatePlayerSFX();
 
@@ -621,7 +637,7 @@ export default class MainScene extends Phaser.Scene  {
 
         this.showEndStats(true, myName);
 
-        console.log("reached goal");
+        // console.log("reached goal");
     }
 
     handleGameEnd(message) {
@@ -697,7 +713,7 @@ export default class MainScene extends Phaser.Scene  {
         this.transitionMusic(nextKey);
     }
 
-    updateBackgroundByHeight() {
+    updateMusicByHeight() {
         if (!this.levelManager || !this.player) return;
 
         const playerY = this.player.sprite.y;
@@ -709,49 +725,98 @@ export default class MainScene extends Phaser.Scene  {
         const oceanStartY = this.levelManager.levelHeight - stageHeight * 2;
 
         if (playerY <= oceanStartY) {
-            this.transitionBackground("OCEAN");
+        this.transitionMusic("OCEAN");
         } else if (playerY <= caveStartY) {
-            this.transitionBackground("CAVE");
+            this.transitionMusic("CAVE");
         } else {
-            this.transitionBackground("HELL")
+            this.transitionMusic("HELL");
         }
     }
 
+    // createBackgrounds() {
+    //     // LEVEL BACKGROUND CREATION
+    //     this.currentBackgroundKey = "HELL";
+
+    //     const centerX = this.levelManager.levelWidth / 2;
+
+    //     const chunksPerStage = 5;
+    //     const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+    //     const hellBottomY = this.levelManager.levelHeight;
+    //     const caveBottomY = this.levelManager.levelHeight - stageHeight;
+    //     const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
+
+    //     this.backgrounds = {
+    //         HELL: this.add.image(centerX, hellBottomY, "HELL"),
+    //         CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+    //         OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN")
+    //     };
+
+    //     for (const bg of Object.values(this.backgrounds)) {
+    //         bg.setOrigin(0.5, 1);
+
+    //         const scaleX = this.levelManager.levelWidth / bg.width;
+    //         const scaleY = stageHeight / bg.height;
+    //         const scale = Math.max(scaleX, scaleY);
+
+    //         bg.setScale(scale);
+
+    //         bg.setScrollFactor(1);
+
+    //         bg.setDepth(-50);
+    //         bg.setAlpha(0);
+    //     }
+        
+    //     this.backgrounds.HELL.setAlpha(1);
+    // }
+
     createBackgrounds() {
-        // LEVEL BACKGROUND CREATION
         this.currentBackgroundKey = "HELL";
 
         const centerX = this.levelManager.levelWidth / 2;
-        const centerY = this.levelManager.levelHeight / 2;
+
+        const chunksPerStage = 5;
+        const stageHeight = this.levelManager.chunkHeight * chunksPerStage;
+
+        const hellBottomY = this.levelManager.levelHeight;
+        const caveBottomY = this.levelManager.levelHeight - stageHeight;
+        const oceanBottomY = this.levelManager.levelHeight - stageHeight * 2;
 
         this.backgrounds = {
-            HELL: this.add.image(centerX, centerY, "HELL"),
-            CAVE: this.add.image(centerX, centerY, "CAVE"),
-            OCEAN: this.add.image(centerX, centerY, "OCEAN")
+            HELL: this.add.image(centerX, hellBottomY, "HELL"),
+            CAVE: this.add.image(centerX, caveBottomY, "CAVE"),
+            OCEAN: this.add.image(centerX, oceanBottomY, "OCEAN"),
         };
 
         for (const bg of Object.values(this.backgrounds)) {
-            bg.setOrigin(0.5, 1.1);
+            bg.setOrigin(0.5, 1);
 
-            const scale = this.levelManager.levelWidth / bg.width;
+            const scaleX = this.levelManager.levelWidth / bg.width;
+            const scaleY = stageHeight / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+
             bg.setScale(scale);
-
-            bg.setScrollFactor(0.35);
+            bg.setScrollFactor(1);
             bg.setDepth(-50);
-            bg.setAlpha(0);
+
+            // Always visible
+            bg.setAlpha(1);
         }
-        
-        this.backgrounds.HELL.setAlpha(1);
     }
 
     transitionMusic(nextKey) {
         if (!this.backgroundMusic) return;
         if (this.currentMusicKey === nextKey) return;
 
-        const oldMusic = this.backgroundMusic[this.currentMusicKey];
+        const oldKey = this.currentMusicKey;
+        const oldMusic = this.backgroundMusic[oldKey];
         const newMusic = this.backgroundMusic[nextKey];
 
         if (!oldMusic || !newMusic) return;
+
+        // kill previous tweens so volume transitions do not stack weirdly
+        this.tweens.killTweensOf(oldMusic);
+        this.tweens.killTweensOf(newMusic);
 
         this.currentMusicKey = nextKey;
 
@@ -766,16 +831,34 @@ export default class MainScene extends Phaser.Scene  {
             duration: 1200,
             ease: "Sine.easeInOut",
             onComplete: () => {
-                oldMusic.stop();
+                // only stop if it did not become active again during the transition
+                if (this.currentMusicKey !== oldKey) {
+                    oldMusic.stop();
+                }
             },
         });
 
-        // Fade in new music
         this.tweens.add({
             targets: newMusic,
             volume: this.musicVolume,
             duration: 1200,
             ease: "Sine.easeInOut",
         });
+    }
+
+    updateHeightMeter() {
+        if (!this.player || !this.levelManager || !this.heightText) return;
+
+        const playerY = this.player.sprite.y;
+        const levelHeight = this.levelManager.levelHeight;
+
+        const heightPx = levelHeight - playerY;
+
+        const heightMeters = Math.max(0, Math.floor(heightPx / 10));
+
+        const progress = Phaser.Math.Clamp(heightPx / levelHeight, 0, 1);
+        const percent = Math.floor(progress * 100);
+
+        this.heightText.setText(`Height: ${heightMeters}m ${percent}%`);
     }
 }
