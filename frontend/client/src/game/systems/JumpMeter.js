@@ -112,6 +112,14 @@ export default class JumpMeter {
             // console.log("Normal jump!");
         }
 
+        if (this.player.direction == "right"){
+            this.player.playJumpRight();
+        }
+        else{
+            this.player.playJumpLeft();
+        }
+
+
         this.player.setVelocityY(jumpPower);
 
         this.scene.events.emit("player-jump");

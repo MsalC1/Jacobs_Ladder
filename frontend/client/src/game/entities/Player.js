@@ -74,6 +74,29 @@ export default class Player {
         this.sprite.anims.play("walk-right", true);
     }
 
+    playJumpRight(){
+        this.direction = "right";
+
+        if (this.sprite.texture.key !== "player-right-jump"){
+            this.sprite.setTexture("player-right-jump");
+        }
+
+        this.sprite.anims.play("jump-right", true);
+    }
+
+    playJumpLeft() {
+        this.direction = "left";
+
+        if (this.sprite.texture.key !== "player-left-jump"){
+            this.sprite.setTexture("player-left-jump");
+        }
+
+        this.sprite.anims.play("jump-left", true);
+
+    }
+
+
+
     playIdle() {
         const idleKey = this.direction === "left" ? "idle-left" : "idle-right"; // if facing left -> idle-left else -> idle-right
         this.sprite.anims.play(idleKey, true);

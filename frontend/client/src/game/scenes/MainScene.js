@@ -23,6 +23,8 @@ export default class MainScene extends Phaser.Scene  {
         // PLAYER ASSETS
         const playerRight   = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_right2.PNG", import.meta.url).href;
         const playerLeft    = new URL("../../assets/PlayerCharacter/spritesheets/player_walking_left2.PNG", import.meta.url).href;
+        const playerRightJump = new URL("../../assets/PlayerCharacter/spritesheets/Character_jump_right.png", import.meta.url).href;
+        const playerLeftJump = new URL("../../assets/PlayerCharacter/spritesheets/Character_jump_left.png", import.meta.url).href;
 
         const jumpBar       = new URL("../../assets/jumpbar/test_bar_gauge.png", import.meta.url).href;
         const jumpBarBg     = new URL("../../assets/jumpbar/bar_background.png", import.meta.url).href;
@@ -77,6 +79,9 @@ export default class MainScene extends Phaser.Scene  {
         // PLAYER ANIMATIONS
         this.load.spritesheet('player-right', playerRight, { frameWidth: 191, frameHeight: 280 });
         this.load.spritesheet('player-left', playerLeft, { frameWidth: 191, frameHeight: 280 });
+        this.load.spritesheet('player-right-jump', playerRightJump, {frameWidth: 191, frameHeigh: 280});
+        this.load.spritesheet('player-left-jump', playerLeftJump, {frameWidth: 191, frameHeigh: 280});
+
 
         // BACKGROUND MUSIC
         const hellTheme = new URL("../../assets/music/a_long_journey.ogg", import.meta.url).href;
@@ -397,6 +402,18 @@ export default class MainScene extends Phaser.Scene  {
             key: 'walk-right',
             frames: this.anims.generateFrameNumbers('player-right', { start: 0, end: 6 }),
             frameRate: 12,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'jump-right',
+            frames: this.anims.generateFrameNumbers('player-right-jump', { start: 0, end: 6 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'jump-left',
+            frames: this.anims.generateFrameNumbers('player-left-jump', {start: 0, end: 6}),
+            frameRate: 5,
             repeat: -1
         });
         this.anims.create({
