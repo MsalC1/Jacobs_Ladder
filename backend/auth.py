@@ -4,10 +4,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, jsonify
 
-# SECRET_KEY_AUTH = os.environ.get('JWT_SECRET_KEY', 'change-me-for-production')
-
-# Fallback value added to SECRET_KEY_AUTH
-SECRET_KEY_AUTH = "change-me"
+SECRET_KEY_AUTH = os.environ.get('SECRET_KEY_AUTH')
 
 
 def create_token(player_id, username):
