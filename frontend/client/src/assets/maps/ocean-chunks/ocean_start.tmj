@@ -497,10 +497,39 @@
          "y":0
         }, 
         {
+         "color":"#00ff00",
          "draworder":"topdown",
          "id":6,
          "name":"Checkpoints",
-         "objects":[],
+         "objects":[
+                {
+                 "height":0,
+                 "id":11,
+                 "name":"checkpoint",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"string",
+                         "value":"ocean-checkpoint"
+                        }, 
+                        {
+                         "name":"order",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"checkpoint"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":43.6666666666667,
+                 "y":724.333333333333
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -530,7 +559,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":11,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

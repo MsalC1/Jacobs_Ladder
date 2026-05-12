@@ -1,5 +1,6 @@
 import { hellChunks } from "./chunks/hellChunks";
 import { caveChunks } from "./chunks/caveChunks";
+import { oceanChunks } from "./chunks/oceanChunks";
 
 function hashStringToSeed(str) {
     let hash = 2166136261;
@@ -43,6 +44,10 @@ export function createStageOrder(roomCode) {
 
     const randomChunksCave = seededShuffle(caveChunks.pool, random).slice(0, 3);
 
+    const randomChunksOcean = seededShuffle(oceanChunks.pool, random).slice(0, 3);
+
+    
+
     return [
         hellChunks.start,
         ...randomChunksHell,
@@ -51,5 +56,9 @@ export function createStageOrder(roomCode) {
         caveChunks.start,
         ...randomChunksCave,
         caveChunks.end,
+
+        oceanChunks.start,
+        ...randomChunksOcean,
+        oceanChunks.end,
     ];
 }
