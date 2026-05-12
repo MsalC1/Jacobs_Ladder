@@ -94,11 +94,6 @@ export default class MainScene extends Phaser.Scene  {
         const HURT_VOL = 0.2;
 
         // LEVEL BACKGROUND CREATION
-<<<<<<< HEAD
-        const bg = this.add.image(400, 2150, "HELL");
-        bg.setDisplaySize(800, 4320);
-        bg.setDepth(-15);
-=======
         const bgHell = this.add.image(400, 2150*3, "HELL");
         bgHell.setDisplaySize(800, 4320);
         bgHell.setDepth(-10);
@@ -106,7 +101,6 @@ export default class MainScene extends Phaser.Scene  {
         const bgCave = this.add.image(400, 2150, "CAVE");
         bgCave.setDisplaySize(800, 4320);
         bgCave.setDepth(-10);
->>>>>>> 88999092e74c93075867cf66e157d1dbdca7e603
         
         this.createPlayerAnimations();
 

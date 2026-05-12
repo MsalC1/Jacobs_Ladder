@@ -739,6 +739,19 @@
          "tilecount":60,
          "tileheight":32,
          "tilewidth":32
+        }, 
+        {
+         "columns":12,
+         "firstgid":3189,
+         "image":"..\/..\/tilesets\/ocean-tileset.png",
+         "imageheight":576,
+         "imagewidth":384,
+         "margin":0,
+         "name":"ocean-tileset",
+         "spacing":0,
+         "tilecount":216,
+         "tileheight":32,
+         "tilewidth":32
         }],
  "tilewidth":32,
  "type":"map",
